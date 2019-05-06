@@ -1,5 +1,7 @@
-﻿using SendGrid;
+﻿#pragma warning disable SA1200 // Using directives should be placed correctly
+using SendGrid;
 using SendGrid.Helpers.Mail;
+#pragma warning restore SA1200 // Using directives should be placed correctly
 
 namespace RedCounterSoftware.Mailing.SendGrid
 {
@@ -10,13 +12,13 @@ namespace RedCounterSoftware.Mailing.SendGrid
 
     using Common.Mailing;
 
-    public class SendGridMailingService : IMailingService
+    public class MailingService : IMailingService
     {
         private readonly string sendGridApiKey;
 
         private readonly string baseUrl;
 
-        public SendGridMailingService(string sendGridApiKey, string baseUrl)
+        public MailingService(string sendGridApiKey, string baseUrl)
         {
             if (string.IsNullOrEmpty(sendGridApiKey))
             {

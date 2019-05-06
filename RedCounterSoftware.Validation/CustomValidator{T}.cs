@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿#pragma warning disable SA1200 // Using directives should be placed correctly
+using FluentValidation;
+#pragma warning restore SA1200 // Using directives should be placed correctly
 
 namespace RedCounterSoftware.Validation.FluentValidation
 {
