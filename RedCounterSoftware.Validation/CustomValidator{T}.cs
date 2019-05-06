@@ -1,4 +1,6 @@
-﻿namespace RedCounterSoftware.Validation
+﻿using FluentValidation;
+
+namespace RedCounterSoftware.Validation.FluentValidation
 {
     using System;
     using System.Linq;
@@ -6,12 +8,11 @@
     using System.Threading.Tasks;
     using Common.Extensions;
     using Common.Validation;
-    using FluentValidation;
 
-    public abstract class FluentValidationValidator<T> : AbstractValidator<T>, ICustomValidator<T>
+    public abstract class CustomValidator<T> : AbstractValidator<T>, ICustomValidator<T>
         where T : class
     {
-        protected FluentValidationValidator() => this.CascadeMode = CascadeMode.StopOnFirstFailure;
+        protected CustomValidator() => this.CascadeMode = CascadeMode.StopOnFirstFailure;
 
         public async Task<Result<T>> PerformValidation(T toValidate, int? index = null)
         {
