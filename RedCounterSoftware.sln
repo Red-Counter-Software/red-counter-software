@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.Common",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedCounterSoftware.Validation.FluentValidation", "RedCounterSoftware.Validation\RedCounterSoftware.Validation.FluentValidation.csproj", "{636F4C61-076F-4D19-B5BE-5EFE5FD18DB1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedCounterSoftware.Mailing.SendGrid", "RedCounterSoftware.Mailing\RedCounterSoftware.Mailing.SendGrid.csproj", "{D0EF4130-872B-407C-96F2-A101F58A393D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{636F4C61-076F-4D19-B5BE-5EFE5FD18DB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{636F4C61-076F-4D19-B5BE-5EFE5FD18DB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{636F4C61-076F-4D19-B5BE-5EFE5FD18DB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0EF4130-872B-407C-96F2-A101F58A393D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0EF4130-872B-407C-96F2-A101F58A393D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0EF4130-872B-407C-96F2-A101F58A393D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0EF4130-872B-407C-96F2-A101F58A393D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
