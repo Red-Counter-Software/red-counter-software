@@ -4,20 +4,18 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <LangVersion>7.3</LangVersion>
     <CodeAnalysisRuleSet>..\ca.ruleset</CodeAnalysisRuleSet>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Company>Red Counter Software</Company>
     <Authors>Matteo Mosca</Authors>
-    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <Copyright>Copyright © 2019 Red Counter Software. All rights reserved.</Copyright>
-    <RepositoryUrl>https://github.com/matteo-mosca/red-counter-software</RepositoryUrl>
+    <Company>Red Counter Software</Company>
     <RepositoryType>Git</RepositoryType>
+    <RepositoryUrl>https://github.com/matteo-mosca/red-counter-software</RepositoryUrl>
+    <Copyright>Copyright © 2019 Red Counter Software. All rights reserved.</Copyright>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <SignAssembly>false</SignAssembly>
     <Version>1.2.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
   </PropertyGroup>
@@ -29,15 +27,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="8.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\RedCounterSoftware.Common\RedCounterSoftware.Common.csproj" />
+    <ProjectReference Include="..\RedCounterSoftware.Logging.Web\RedCounterSoftware.Logging.Web.csproj" />
   </ItemGroup>
 
 </Project>
