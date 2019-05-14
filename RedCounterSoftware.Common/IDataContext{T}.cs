@@ -11,7 +11,7 @@
     /// </summary>
     /// <typeparam name="T">The type of the entity handled.</typeparam>
     public interface IDataContext<T> : IDisposable
-        where T : DataObjectBase
+        where T : class, IDataObject
     {
         /// <summary>
         /// Adds an instance of <see cref="T"/> to the underlying storage.
@@ -34,7 +34,7 @@
         /// <param name="id">The entity id.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns a completed task.</returns>
-        Task Delete(string id, CancellationToken cancellationToken = default);
+        Task Delete(object id, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Returns true if the entity with specified property exists.
@@ -75,6 +75,6 @@
         /// <param name="value">The new value to set.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns the updated entity.</returns>
-        Task<T> Patch<TK>(string id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default);
+        Task<T> Patch<TK>(object id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default);
     }
 }
