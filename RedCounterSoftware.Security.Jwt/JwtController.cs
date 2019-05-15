@@ -19,7 +19,7 @@
     [AllowAnonymous]
     public abstract class JwtController : Controller
     {
-        private readonly IUserStoreService userStoreService;
+        private readonly IAuthenticationService authenticationService;
 
         private readonly IRoleStoreService roleStoreService;
 
@@ -38,7 +38,7 @@
         private readonly string passwordResetHtmlBody;
 
         protected JwtController(
-            IUserStoreService userStoreService,
+            IAuthenticationService authenticationService,
             IRoleStoreService roleStoreService,
             IPersonStoreService personStoreService,
             IMailingService mailingService,
@@ -48,7 +48,7 @@
             string passwordResetTextBody,
             string passwordResetHtmlBody)
         {
-            this.userStoreService = userStoreService ?? throw new ArgumentNullException(nameof(userStoreService));
+            this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
 
             this.roleStoreService = roleStoreService ?? throw new ArgumentNullException(nameof(roleStoreService));
 
@@ -78,7 +78,7 @@
             using (this.logger.BeginScope(LoggingEvents.Activation))
             using (this.logger.ScopeRemoteIp(this.HttpContext))
             {
-                var result = await this.userStoreService.Activate(model.Id);
+                var result = await this.authenticationService.Activate(model.Id);
 
                 if (!result.IsValid)
                 {
@@ -86,7 +86,7 @@
                     return this.NotFound();
                 }
 
-                await this.userStoreService.SetPassword(result.Item.Id, model.Password);
+                await this.authenticationService.SetPassword(result.Item.Id, model.Password);
                 this.logger.LogInformation(LoggingEvents.ActivationOk, "User {user} with activation code [{code}] created a password and activated succesfully", result.Item.Email, model.Id);
                 return this.Ok();
             }
@@ -105,7 +105,7 @@
             {
                 this.logger.LogInformation(LoggingEvents.Authentication, "JWT Token requested for user {user}", loginModel.Username);
 
-                var isAuthorized = await this.userStoreService.IsPasswordValid(loginModel.Username, loginModel.Password);
+                var isAuthorized = await this.authenticationService.IsPasswordValid(loginModel.Username, loginModel.Password);
 
                 if (!isAuthorized)
                 {
@@ -113,9 +113,9 @@
                     return this.Unauthorized();
                 }
 
-                var user = await this.userStoreService.GetBy(u => u.Email, loginModel.Username, CancellationToken.None);
+                var user = await this.authenticationService.GetBy(u => u.Email, loginModel.Username, CancellationToken.None);
 
-                var isValidStatus = await this.userStoreService.IsUserActive(user);
+                var isValidStatus = await this.authenticationService.IsUserActive(user);
 
                 if (!isValidStatus)
                 {
@@ -141,7 +141,7 @@
             using (this.logger.BeginScope(LoggingEvents.ResetPassword))
             using (this.logger.ScopeRemoteIp(this.HttpContext))
             {
-                var user = await this.userStoreService.GetBy(u => u.Email, model.Email);
+                var user = await this.authenticationService.GetBy(u => u.Email, model.Email);
                 if (user == null)
                 {
                     this.logger.LogInformation(LoggingEvents.ResetPassword, "Attempted to reset password for non existing user {user}", model.Email);
@@ -151,7 +151,7 @@
                 }
 
                 var guid = Guid.NewGuid();
-                var result = await this.userStoreService.Patch(user.Id, c => c.PasswordResetGuid, guid, CancellationToken.None);
+                var result = await this.authenticationService.Patch(user.Id, c => c.PasswordResetGuid, guid, CancellationToken.None);
                 this.logger.LogInformation(LoggingEvents.ResetPassword, "Set password reset guid for user {user} to [{id}]", model.Email, guid);
 
                 user = result.Item;
@@ -173,14 +173,14 @@
             using (this.logger.BeginScope(LoggingEvents.ResetPassword))
             using (this.logger.ScopeRemoteIp(this.HttpContext))
             {
-                var user = await this.userStoreService.GetBy(u => u.PasswordResetGuid, model.Id, CancellationToken.None);
+                var user = await this.authenticationService.GetBy(u => u.PasswordResetGuid, model.Id, CancellationToken.None);
                 if (user == null)
                 {
                     this.logger.LogInformation("No user found with matching password reset guid [{id}]", model.Id);
                     return this.NotFound();
                 }
 
-                var result = await this.userStoreService.SetPassword(user.Id, model.Password, CancellationToken.None);
+                var result = await this.authenticationService.SetPassword(user.Id, model.Password, CancellationToken.None);
                 if (result.IsValid)
                 {
                     return this.Ok();
