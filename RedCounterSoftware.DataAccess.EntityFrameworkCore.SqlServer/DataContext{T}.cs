@@ -12,7 +12,7 @@
     using RedCounterSoftware.Common;
     using RedCounterSoftware.Common.Extensions;
 
-    public class DataContext<T> : IDataContext<T>
+    public abstract class DataContext<T> : IDataContext<T>
         where T : class, IDataObject
     {
         private readonly DbContext context;
@@ -106,6 +106,8 @@
 
             return entity;
         }
+
+        public abstract Task<SearchResult<T>> Search(SearchParameters<T> searchParameters, CancellationToken cancellationToken = default);
 
         // This code added to correctly implement the disposable pattern.
         public void Dispose()

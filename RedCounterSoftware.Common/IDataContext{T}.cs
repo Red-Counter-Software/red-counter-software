@@ -76,5 +76,13 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns the updated entity.</returns>
         Task<T> Patch<TK>(object id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Performs a search based on the provided parameters.
+        /// </summary>
+        /// <param name="searchParameters">The search parameters.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Returns the result of the search.</returns>
+        Task<SearchResult<T>> Search(SearchParameters<T> searchParameters, CancellationToken cancellationToken = default);
     }
 }
