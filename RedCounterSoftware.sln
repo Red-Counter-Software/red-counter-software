@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.Logging.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.Security.Jwt", "RedCounterSoftware.Security.Jwt\RedCounterSoftware.Security.Jwt.csproj", "{6E65800F-9B35-4282-8DB5-2DDC0DCE3B9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedCounterSoftware.DataAccess.EntityFrameworkCore.SqlServer", "RedCounterSoftware.DataAccess.EntityFrameworkCore.SqlServer\RedCounterSoftware.DataAccess.EntityFrameworkCore.SqlServer.csproj", "{FB0250BA-CACA-4DCA-877B-1755BE8AEC91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.DataAccess.EntityFrameworkCore.SqlServer", "RedCounterSoftware.DataAccess.EntityFrameworkCore.SqlServer\RedCounterSoftware.DataAccess.EntityFrameworkCore.SqlServer.csproj", "{FB0250BA-CACA-4DCA-877B-1755BE8AEC91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedCounterSoftware.WebApi", "RedCounterSoftware.WebApi\RedCounterSoftware.WebApi.csproj", "{1CB82F70-84E3-4064-AC30-3EEB93FD97F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{FB0250BA-CACA-4DCA-877B-1755BE8AEC91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB0250BA-CACA-4DCA-877B-1755BE8AEC91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB0250BA-CACA-4DCA-877B-1755BE8AEC91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CB82F70-84E3-4064-AC30-3EEB93FD97F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CB82F70-84E3-4064-AC30-3EEB93FD97F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CB82F70-84E3-4064-AC30-3EEB93FD97F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CB82F70-84E3-4064-AC30-3EEB93FD97F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
