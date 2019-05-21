@@ -54,18 +54,15 @@
             }
         }
 
-        [HttpGet]
-        public virtual Task<T> GetById(string id) => this.StoreService.GetBy(c => c.Id, id);
+        protected virtual Task<T> GetById<TK>(TK id) => this.StoreService.GetBy(c => c.Id, id);
 
-        [HttpDelete]
-        public virtual Task<Result> Delete(string id) => this.StoreService.Delete(id);
+        protected virtual Task<Result> Delete<TK>(TK id) => this.StoreService.Delete(id);
 
-        [HttpPatch]
-        public virtual async Task<Result<T>> Patch(string id, string propertyName, object value)
+        protected virtual async Task<Result<T>> Patch<TK>(TK id, string propertyName, object value)
         {
-            if (string.IsNullOrEmpty(id))
+            if (id == null)
             {
-                throw new ArgumentException("Cannot be empty", nameof(id));
+                throw new ArgumentNullException(nameof(id));
             }
 
             if (string.IsNullOrEmpty(propertyName))
