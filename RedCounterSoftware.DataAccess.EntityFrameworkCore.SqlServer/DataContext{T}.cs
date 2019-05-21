@@ -107,7 +107,11 @@
             return entity;
         }
 
-        public abstract Task<SearchResult<T>> Search(SearchParameters<T> searchParameters, CancellationToken cancellationToken = default);
+        public virtual Task<SearchResult<T>> Search(SearchParameters<T> searchParameters, CancellationToken cancellationToken = default)
+        {
+            var query = this.ComposeSearch(searchParameters);
+            return Task.FromResult(this.SearchFilters(query, searchParameters));
+        }
 
         // This code added to correctly implement the disposable pattern.
         public void Dispose()
@@ -119,13 +123,22 @@
             // GC.SuppressFinalize(this);
         }
 
+        protected abstract IQueryable<T> ComposeSearch(SearchParameters<T> searchParameters);
+
+        protected virtual SearchResult<T> SearchFilters(IQueryable<T> queryable, SearchParameters<T> searchParameters)
+        {
+            var ordered = searchParameters.IsDescending ? queryable.OrderByDescending(searchParameters.SortExpression) : queryable.OrderBy(searchParameters.SortExpression);
+            var paged = ordered.Skip(searchParameters.PageSize * searchParameters.CurrentPage).Take(searchParameters.PageSize);
+            return new SearchResult<T>(queryable.Count(), paged.ToList());
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!this.disposedValue)
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects).
+                    this.context.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
