@@ -11,15 +11,18 @@
     /// </summary>
     /// <typeparam name="T">The type of the entity handled.</typeparam>
     public interface IDataContext<T> : IDisposable
-        where T : class, IDataObject
+        where T : class
     {
         /// <summary>
         /// Adds an instance of <see cref="T"/> to the underlying storage.
         /// </summary>
+        /// <typeparam name="TId">The type of the Id property.</typeparam>
+        /// <param name="filter">The expression to filter by Id.</param>
+        /// <param name="id">The id.</param>
         /// <param name="toAdd">Entity to add.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns the added entity.</returns>
-        Task<T> Add(T toAdd, CancellationToken cancellationToken = default);
+        Task<T> Add<TId>(Expression<Func<T, TId>> filter, TId id, T toAdd, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Returns a total count of the elements of type <see cref="T"/> in the storage.
@@ -31,10 +34,12 @@
         /// <summary>
         /// Removes the entity with matching id from the storage.
         /// </summary>
-        /// <param name="id">The entity id.</param>
+        /// <typeparam name="TId">The type of the Id property.</typeparam>
+        /// <param name="filter">The expression to filter by Id.</param>
+        /// <param name="id">The id.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns a completed task.</returns>
-        Task Delete(object id, CancellationToken cancellationToken = default);
+        Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Returns true if the entity with specified property exists.
@@ -69,13 +74,15 @@
         /// <summary>
         /// Updates the property indicated by the <see cref="selector"/> of the entity with provided <see cref="id"/> using the provided <see cref="value"/>.
         /// </summary>
+        /// <typeparam name="TId">The type of the Id property.</typeparam>
         /// <typeparam name="TK">The type of the property to update.</typeparam>
-        /// <param name="id">The entity id.</param>
+        /// <param name="filter">The expression to filter by Id.</param>
+        /// <param name="id">The id.</param>
         /// <param name="selector">The lamdba expression representing the property to update.</param>
         /// <param name="value">The new value to set.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns the updated entity.</returns>
-        Task<T> Patch<TK>(object id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default);
+        Task<T> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Performs a search based on the provided parameters.

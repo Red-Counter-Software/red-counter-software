@@ -2,8 +2,10 @@
 {
     using System;
 
-    public interface IPerson : IDataObject
+    public interface IPerson
     {
+        object Id { get; }
+
         DateTimeOffset BirthDate { get; }
     }
 }
