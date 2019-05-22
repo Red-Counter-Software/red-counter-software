@@ -67,7 +67,7 @@
             this.passwordResetHtmlBody = passwordResetHtmlBody ?? throw new ArgumentNullException(nameof(passwordResetHtmlBody));
         }
 
-        [HttpPost]
+        [HttpPost("activate")]
         public async Task<IActionResult> ActivateUser([FromBody]ActivateUserModel model)
         {
             if (model == null)
@@ -92,7 +92,7 @@
             }
         }
 
-        [HttpPost]
+        [HttpPost("createtoken")]
         public async Task<IActionResult> CreateToken([FromBody]LoginModel loginModel)
         {
             if (loginModel == null)
@@ -130,7 +130,7 @@
             }
         }
 
-        [HttpPost]
+        [HttpPost("requestresetpassword")]
         public async Task<IActionResult> SendPasswordResetMail([FromBody] PasswordResetRequestModel model)
         {
             if (model == null)
@@ -163,6 +163,7 @@
             }
         }
 
+        [HttpPost("resetpassword")]
         public async Task<IActionResult> ResetPassword([FromBody] PasswordResetModel model)
         {
             if (model == null)
