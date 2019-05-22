@@ -93,5 +93,12 @@
 
             throw new InvalidOperationException("No parameter expression found in provided expression");
         }
+
+        public static Expression<Func<T, bool>> GetFilterExpression<T, TK>(this Expression<Func<T, TK>> selector, TK value)
+        {
+            var exp = selector.Body.CreateKeyComparisonExpression(Expression.Constant(value));
+            var lambda = (Expression<Func<T, bool>>)Expression.Lambda(exp, false, selector.GetParameterExpression());
+            return lambda;
+        }
     }
 }
