@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public interface IRole : IDataObject
+    public interface IRole
     {
         /// <summary>
         /// Gets the user friendly name of the role.

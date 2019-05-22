@@ -1,6 +1,7 @@
 ﻿namespace RedCounterSoftware.WebApi
 {
     using System;
+    using System.Linq.Expressions;
     using System.Threading.Tasks;
 
     using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@
 
     [ApiController]
     public abstract class CrudApiController<T> : ControllerBase
-        where T : class, IDataObject
+        where T : class
     {
         private readonly ILogger logger;
 
@@ -25,8 +26,7 @@
 
         protected IStoreService<T> StoreService { get; }
 
-        [HttpPost]
-        public virtual async Task<Result<T>> Add([FromBody]T item)
+        protected async Task<Result<T>> Add<TK>(Expression<Func<T, TK>> filter, TK id, T item)
         {
             if (item == null)
             {
@@ -40,7 +40,7 @@
 
                 this.logger.LogInformation(LoggingEvents.CrudAdd, "Attempting to add {itemType} {itemData}", typeName, item.ToString());
 
-                var result = await this.StoreService.Add(item);
+                var result = await this.StoreService.Add(filter, id, item);
                 if (!result.IsValid)
                 {
                     this.logger.LogInformation(LoggingEvents.CrudAdd, $"Validation errors occurred while attempting to add {{itemType}} {{itemData}}:{Environment.NewLine}{{errors}}", typeName, item.ToString(), result.FormatFailuresForLog());
@@ -54,11 +54,11 @@
             }
         }
 
-        protected virtual Task<T> GetById<TK>(TK id) => this.StoreService.GetBy(c => c.Id, id);
+        protected virtual Task<T> GetById<TK>(Expression<Func<T, TK>> filter, TK id) => this.StoreService.GetBy(filter, id);
 
-        protected virtual Task<Result> Delete<TK>(TK id) => this.StoreService.Delete(id);
+        protected virtual Task<Result> Delete<TK>(Expression<Func<T, TK>> filter, TK id) => this.StoreService.Delete(filter, id);
 
-        protected virtual async Task<Result<T>> Patch<TK>(TK id, string propertyName, object value)
+        protected virtual async Task<Result<T>> Patch<TK>(Expression<Func<T, TK>> filter, TK id, string propertyName, object value)
         {
             if (id == null)
             {
@@ -87,7 +87,7 @@
             {
                 this.logger.LogInformation("Updating property \"{property}\" on object \"{object}\" with id \"{id}\" using value \"{value}\"", propertyName, nameof(T), id, value);
 
-                var result = await this.StoreService.Patch(id, exp, changedValue);
+                var result = await this.StoreService.Patch(filter, id, exp, changedValue);
                 return result.ToCamelCasedPropertiesResult();
             }
         }

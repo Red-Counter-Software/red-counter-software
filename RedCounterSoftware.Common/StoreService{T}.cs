@@ -10,7 +10,7 @@
     using Common.Validation;
 
     public abstract class StoreService<T> : IStoreService<T>
-        where T : class, IDataObject
+        where T : class
     {
         protected StoreService(IDataContext<T> context, ICustomValidator<T> validator)
         {
@@ -22,15 +22,13 @@
 
         protected ICustomValidator<T> Validator { get; }
 
-        protected virtual Func<T, string> IdGenerationFunc => x => x.FormatId();
-
         public void Dispose()
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        public virtual async Task<Result<T>> Add(T toAdd, CancellationToken cancellationToken = default)
+        public virtual async Task<Result<T>> Add<TId>(Expression<Func<T, TId>> filter, TId id, T toAdd, CancellationToken cancellationToken = default)
         {
             if (toAdd == null)
             {
@@ -38,12 +36,11 @@
             }
 
             var result = await this.Validator.PerformValidation(toAdd);
-            var id = this.IdGenerationFunc(toAdd);
-            var exists = await this.Context.ExistsBy(c => c.Id, id, cancellationToken);
+            var exists = await this.Context.ExistsBy(filter, id, cancellationToken);
 
             if (exists)
             {
-                result.Failures.Add(new Failure(nameof(toAdd.Id), $"{nameof(T)} already exists", id));
+                result.Failures.Add(new Failure(nameof(id), $"{nameof(T)} already exists", id));
             }
 
             await this.AddItemAdditionalChecks(toAdd, result, cancellationToken);
@@ -53,29 +50,24 @@
                 return result;
             }
 
-            var created = await this.Context.Add(toAdd, cancellationToken);
+            var created = await this.Context.Add(filter, id, toAdd, cancellationToken);
             return new Result<T>(created, new List<Failure>());
         }
 
         public virtual Task<int> Count(CancellationToken cancellationToken = default) => this.Context.Count(cancellationToken);
 
-        public virtual async Task<Result> Delete(object id, CancellationToken cancellationToken = default)
+        public virtual async Task<Result> Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default)
         {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
-
-            await this.Context.Delete(id, cancellationToken);
+            await this.Context.Delete(filter, id, cancellationToken);
 
             return new Result(new List<Failure>());
         }
 
         public virtual Task<T> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default) => this.Context.GetBy(selector, value, cancellationToken);
 
-        public virtual async Task<Result<T>> Patch<TK>(object id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
+        public virtual async Task<Result<T>> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
-            var current = await this.Context.GetBy(c => c.Id, id, cancellationToken);
+            var current = await this.Context.GetBy(filter, id, cancellationToken);
 
             if (current == null)
             {
@@ -102,7 +94,7 @@
                 return propertyResult;
             }
 
-            var patched = await this.Context.Patch(id, selector, updatedValue, cancellationToken);
+            var patched = await this.Context.Patch(filter, id, selector, updatedValue, cancellationToken);
             return new Result<T>(patched, new List<Failure>());
         }
 

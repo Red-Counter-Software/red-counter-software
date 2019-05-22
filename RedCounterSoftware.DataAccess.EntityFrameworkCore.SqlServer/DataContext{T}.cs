@@ -13,7 +13,7 @@
     using RedCounterSoftware.Common.Extensions;
 
     public abstract class DataContext<T> : IDataContext<T>
-        where T : class, IDataObject
+        where T : class
     {
         private readonly DbContext context;
 
@@ -27,7 +27,7 @@
             this.entitySet = this.context.Set<T>();
         }
 
-        public async Task<T> Add(T toAdd, CancellationToken cancellationToken = default)
+        public async Task<T> Add<TId>(Expression<Func<T, TId>> filter, TId id, T toAdd, CancellationToken cancellationToken = default)
         {
             var result = await this.entitySet.AddAsync(toAdd, cancellationToken);
             await this.context.SaveChangesAsync(cancellationToken);
@@ -39,9 +39,10 @@
             return this.entitySet.CountAsync(cancellationToken);
         }
 
-        public async Task Delete(object id, CancellationToken cancellationToken = default)
+        public async Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default)
         {
-            var entity = await this.entitySet.SingleOrDefaultAsync(c => c.Id == id, cancellationToken);
+            var lambda = filter.GetFilterExpression(id);
+            var entity = await this.entitySet.SingleOrDefaultAsync(lambda, cancellationToken);
             if (entity != null)
             {
                 this.entitySet.Remove(entity);
@@ -56,8 +57,7 @@
                 throw new ArgumentNullException(nameof(selector));
             }
 
-            var exp = selector.Body.CreateKeyComparisonExpression(Expression.Constant(value));
-            var lambda = (Expression<Func<T, bool>>)Expression.Lambda(exp, false, selector.GetParameterExpression());
+            var lambda = selector.GetFilterExpression(value);
             return this.entitySet.AnyAsync(lambda, cancellationToken);
         }
 
@@ -68,8 +68,7 @@
                 throw new ArgumentNullException(nameof(selector));
             }
 
-            var exp = selector.Body.CreateKeyComparisonExpression(Expression.Constant(value));
-            var lambda = (Expression<Func<T, bool>>)Expression.Lambda(exp, false, selector.GetParameterExpression());
+            var lambda = selector.GetFilterExpression(value);
             return this.entitySet.SingleOrDefaultAsync(lambda, cancellationToken);
         }
 
@@ -87,14 +86,16 @@
             return new SearchResult<T>(data.Count, data);
         }
 
-        public async Task<T> Patch<TK>(object id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
+        public async Task<T> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
             if (id == null)
             {
                 return null;
             }
 
-            var entity = await this.entitySet.SingleOrDefaultAsync(c => c.Id == id, cancellationToken);
+            var lambda = selector.GetFilterExpression(value);
+            var entity = await this.entitySet.SingleOrDefaultAsync(lambda, cancellationToken);
+
             if (entity == null)
             {
                 return null;

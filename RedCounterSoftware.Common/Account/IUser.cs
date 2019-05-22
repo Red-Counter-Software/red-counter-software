@@ -2,8 +2,10 @@
 {
     using System;
 
-    public interface IUser : IDataObject
+    public interface IUser
     {
+        object Id { get; }
+
         Guid? ActivationGuid { get; }
 
         string Email { get; }
