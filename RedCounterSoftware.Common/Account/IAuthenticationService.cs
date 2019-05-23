@@ -21,14 +21,20 @@
         Task<Result<IUser>> Activate(Guid activationGuid, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Returns a single entity that matches the provided selector and value, null if no match is found, or throws an exception if more than one match is found.
+        /// Returns a single entity that matches the provided email address, null if no match is found, or throws an exception if more than one match is found.
         /// </summary>
-        /// <typeparam name="TK">The type of the property to search on.</typeparam>
-        /// <param name="selector">The selector pointing to the search property.</param>
-        /// <param name="value">The value to search for.</param>
+        /// <param name="email">The user email.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Returns a single instance of <see cref="T"/> if found, null if not found, throws an exception if more than one is found.</returns>
-        Task<IUser> GetBy<TK>(Expression<Func<IUser, TK>> selector, TK value, CancellationToken cancellationToken = default);
+        /// <returns>Returns a single instance of <see cref="IUser"/> if found, null if not found, throws an exception if more than one is found.</returns>
+        Task<IUser> GetByEmail(string email, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Returns a single entity that matches the provided password reset guid, null if no match is found, or throws an exception if more than one match is found.
+        /// </summary>
+        /// <param name="passwordResetGuid">The password reset guid.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Returns a single instance of <see cref="IUser"/> if found, null if not found, throws an exception if more than one is found.</returns>
+        Task<IUser> GetByPasswordResetGuid(Guid passwordResetGuid, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Returns false if the provided password does not match the one saved in the document store, otherwise returns true.
@@ -48,17 +54,6 @@
         Task<bool> IsUserActive(IUser user, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Applies validation and business rules before updating the property indicated by the <see cref="selector"/> of the entity with provided <see cref="id"/> using the provided <see cref="value"/>.
-        /// </summary>
-        /// <param name="id">The entity id.</param>
-        /// <param name="selector">The lamdba expression representing the property to update.</param>
-        /// <param name="value">The new value to set.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <typeparam name="TK">The type of the property being updated.</typeparam>
-        /// <returns>Returns a <see cref="Result{T}"/> indicating wether the operation was successful and the updated entity.</returns>
-        Task<Result<IUser>> Patch<TK>(object id, Expression<Func<IUser, TK>> selector, TK value, CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// Computes a new password hash using the provided <see cref="password"/>, optional salt defined in the implementation and sets it as the new <see cref="User.Password"/>.
         /// </summary>
         /// <param name="userId">The id of the user to update.</param>
@@ -68,11 +63,12 @@
         Task<Result> SetPassword(object userId, string password, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Performs a search using the provided <see cref="SearchParameters{User}"/>.
+        /// Sets a new single use password reset guid to be sent to the user.
         /// </summary>
-        /// <param name="searchParameters">The search parameters.</param>
+        /// <param name="userId">The Id of the user.</param>
+        /// <param name="passwordResetGuid">The new password reset guid.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Returns a <see cref="SearchResult{User}"/> containing the entities matching the search criteria.</returns>
-        Task<SearchResult<IUser>> Search(SearchParameters<IUser> searchParameters, CancellationToken cancellationToken = default);
+        /// <returns>Returns a <see cref="Result"/> that informs whether the operation succeeded or not.</returns>
+        Task<Result<IUser>> SetPasswordResetGuid(object userId, Guid passwordResetGuid, CancellationToken cancellationToken = default);
     }
 }
