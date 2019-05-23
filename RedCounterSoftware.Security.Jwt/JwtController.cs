@@ -21,9 +21,9 @@
     {
         private readonly IAuthenticationService authenticationService;
 
-        private readonly IRoleStoreService roleStoreService;
+        private readonly IRoleService roleService;
 
-        private readonly IPersonStoreService personStoreService;
+        private readonly IPersonService personService;
 
         private readonly IMailingService mailingService;
 
@@ -39,8 +39,8 @@
 
         protected JwtController(
             IAuthenticationService authenticationService,
-            IRoleStoreService roleStoreService,
-            IPersonStoreService personStoreService,
+            IRoleService roleService,
+            IPersonService personService,
             IMailingService mailingService,
             IConfiguration configuration,
             ILogger<JwtController> logger,
@@ -50,9 +50,9 @@
         {
             this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
 
-            this.roleStoreService = roleStoreService ?? throw new ArgumentNullException(nameof(roleStoreService));
+            this.roleService = roleService ?? throw new ArgumentNullException(nameof(roleService));
 
-            this.personStoreService = personStoreService ?? throw new ArgumentNullException(nameof(personStoreService));
+            this.personService = personService ?? throw new ArgumentNullException(nameof(personService));
 
             this.mailingService = mailingService ?? throw new ArgumentNullException(nameof(mailingService));
 
@@ -199,8 +199,8 @@
                 throw new ArgumentNullException(nameof(loginModel));
             }
 
-            var roles = includeRoles ? (await this.roleStoreService.GetByUserId(user.Id)).SelectMany(c => c.Claims).ToArray() : null;
-            var person = await this.personStoreService.GetBy(c => c.Id, user.PersonId);
+            var roles = includeRoles ? (await this.roleService.GetByUserId(user.Id)).SelectMany(c => c.Claims).ToArray() : null;
+            var person = await this.personService.GetById(user.PersonId, CancellationToken.None);
             var token = JwtHelper.BuildToken(user, person, this.configuration["Jwt:Key"], this.configuration["Jwt:Issuer"], this.configuration["Jwt:Audience"], roles);
 
             this.logger.LogInformation(LoggingEvents.AuthenticationOk, "Jwt Token created for user {user}", loginModel.Username);
