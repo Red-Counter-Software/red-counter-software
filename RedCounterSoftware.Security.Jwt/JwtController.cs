@@ -113,7 +113,7 @@
                     return this.Unauthorized();
                 }
 
-                var user = await this.authenticationService.GetBy(u => u.Email, loginModel.Username, CancellationToken.None);
+                var user = await this.authenticationService.GetByEmail(loginModel.Username, CancellationToken.None);
 
                 var isValidStatus = await this.authenticationService.IsUserActive(user);
 
@@ -141,7 +141,7 @@
             using (this.logger.BeginScope(LoggingEvents.ResetPassword))
             using (this.logger.ScopeRemoteIp(this.HttpContext))
             {
-                var user = await this.authenticationService.GetBy(u => u.Email, model.Email);
+                var user = await this.authenticationService.GetByEmail(model.Email, CancellationToken.None);
                 if (user == null)
                 {
                     this.logger.LogInformation(LoggingEvents.ResetPassword, "Attempted to reset password for non existing user {user}", model.Email);
@@ -151,7 +151,7 @@
                 }
 
                 var guid = Guid.NewGuid();
-                var result = await this.authenticationService.Patch(user.Id, c => c.PasswordResetGuid, guid, CancellationToken.None);
+                var result = await this.authenticationService.SetPasswordResetGuid(user.Id, guid, CancellationToken.None);
                 this.logger.LogInformation(LoggingEvents.ResetPassword, "Set password reset guid for user {user} to [{id}]", model.Email, guid);
 
                 user = result.Item;
@@ -174,7 +174,7 @@
             using (this.logger.BeginScope(LoggingEvents.ResetPassword))
             using (this.logger.ScopeRemoteIp(this.HttpContext))
             {
-                var user = await this.authenticationService.GetBy(u => u.PasswordResetGuid, model.Id, CancellationToken.None);
+                var user = await this.authenticationService.GetByPasswordResetGuid(model.Id, CancellationToken.None);
                 if (user == null)
                 {
                     this.logger.LogInformation("No user found with matching password reset guid [{id}]", model.Id);
