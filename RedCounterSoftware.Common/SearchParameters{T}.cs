@@ -24,6 +24,11 @@
             this.SortExpression = sortTerm.GetPropertyExpression<T>();
         }
 
+        public SearchParameters(SearchParameters searchParameters)
+            : base(searchParameters.SearchTerm, searchParameters.SortTerm, searchParameters.IsDescending, searchParameters.PageSize, searchParameters.CurrentPage)
+        {
+            this.SortExpression = searchParameters.SortTerm.GetPropertyExpression<T>();
+        }
 
         /// <summary>
         /// Gets the lambda expression indicating the property to sort by.
