@@ -27,9 +27,13 @@
 
         private readonly IMailingService mailingService;
 
-        private readonly IConfiguration configuration;
-
         private readonly ILogger<JwtController> logger;
+
+        private readonly string jwtKey;
+
+        private readonly string jwtIssuer;
+
+        private readonly string jwtAudience;
 
         private readonly string passwordResetSubject;
 
@@ -42,8 +46,10 @@
             IRoleService roleService,
             IPersonService personService,
             IMailingService mailingService,
-            IConfiguration configuration,
             ILogger<JwtController> logger,
+            string jwtKey,
+            string jwtIssuer,
+            string jwtAudience,
             string passwordResetSubject,
             string passwordResetTextBody,
             string passwordResetHtmlBody)
@@ -56,9 +62,13 @@
 
             this.mailingService = mailingService ?? throw new ArgumentNullException(nameof(mailingService));
 
-            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            this.jwtKey = jwtKey ?? throw new ArgumentNullException(nameof(jwtKey));
+
+            this.jwtIssuer = jwtIssuer ?? throw new ArgumentNullException(nameof(jwtIssuer));
+
+            this.jwtAudience = jwtAudience ?? throw new ArgumentNullException(nameof(jwtAudience));
 
             this.passwordResetSubject = passwordResetSubject ?? throw new ArgumentNullException(nameof(passwordResetSubject));
 
@@ -201,7 +211,7 @@
 
             var roles = includeRoles ? (await this.roleService.GetByUserId(user.Id)).SelectMany(c => c.Claims).ToArray() : null;
             var person = await this.personService.GetById(user.PersonId, CancellationToken.None);
-            var token = JwtHelper.BuildToken(user, person, this.configuration["Jwt:Key"], this.configuration["Jwt:Issuer"], this.configuration["Jwt:Audience"], roles);
+            var token = JwtHelper.BuildToken(user, person, this.jwtKey, this.jwtIssuer, this.jwtAudience, roles);
 
             this.logger.LogInformation(LoggingEvents.AuthenticationOk, "Jwt Token created for user {user}", loginModel.Username);
             return token;
