@@ -72,7 +72,7 @@
             {
                 claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                    new Claim(JwtRegisteredClaimNames.UniqueName, user.Id.ToString())
                 };
             }
 
@@ -81,9 +81,9 @@
             {
                 claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.DateOfBirth, person.BirthDate.ToString(CultureInfo.InvariantCulture)),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                    new Claim(JwtRegisteredClaimNames.Birthdate, person.BirthDate.ToString(CultureInfo.InvariantCulture)),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim(JwtRegisteredClaimNames.UniqueName, user.Id.ToString())
                 };
 
                 claims.AddRange(permissions.Select(permission => new Claim(ClaimTypes.Role, permission)));
