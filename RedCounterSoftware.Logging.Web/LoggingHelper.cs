@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
     using System.Security.Claims;
 
@@ -49,7 +50,7 @@
                 throw new ArgumentNullException(nameof(claimsPrincipal));
             }
 
-            return logger.BeginScope(KeyValuePair.Create(CurrentUserKey, claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value));
+            return logger.BeginScope(KeyValuePair.Create(CurrentUserKey, claimsPrincipal.Claims.Single(c => c.Type == JwtRegisteredClaimNames.UniqueName).Value));
         }
 
         public static IDisposable GetCommonScopes(this ILogger logger, HttpContext httpContext, ClaimsPrincipal claimsPrincipal)
