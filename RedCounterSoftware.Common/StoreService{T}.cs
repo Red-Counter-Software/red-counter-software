@@ -65,6 +65,11 @@
 
         public virtual Task<T> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default) => this.Context.GetBy(selector, value, cancellationToken);
 
+        public Task<SearchResult<T>> GetByMultipleValues<TK>(Expression<Func<T, TK>> selector, TK[] values, CancellationToken cancellationToken = default)
+        {
+            return this.Context.GetByMultipleValues(selector, values, cancellationToken);
+        }
+
         public virtual async Task<Result<T>> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
             var current = await this.Context.GetBy(filter, id, cancellationToken);
