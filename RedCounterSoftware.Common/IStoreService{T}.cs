@@ -53,6 +53,16 @@
         Task<T> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Returns a <see cref="SearchResult{T}"/> containing multiple entities that match the array provided values.
+        /// </summary>
+        /// <typeparam name="TK">The type of the property to search on.</typeparam>
+        /// <param name="selector">The selector pointing to the search property.</param>
+        /// <param name="values">The values to look for.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Returns a <see cref="SearchResult{T}"/> containing the matching entities.</returns>
+        Task<SearchResult<T>> GetByMultipleValues<TK>(Expression<Func<T, TK>> selector, TK[] values, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Applies validation and business rules before updating the property indicated by the <see cref="selector"/> of the entity with provided <see cref="id"/> using the provided <see cref="value"/>.
         /// </summary>
         /// <typeparam name="TId">The type of the Id property.</typeparam>
