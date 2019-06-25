@@ -85,11 +85,11 @@
             // Apply additional custom rules and get the potentially modified value. Result gets updated with failuers.
             var updatedValue = await this.PatchItemAdditionalChecks(current, selector, value, result, cancellationToken);
 
-            // Get the new item with the new value
-            var updated = current.With(selector, updatedValue);
+            // Update the item with the new value
+            typeof(T).GetProperty(selector.GetPropertyName()).SetValue(current, updatedValue);
 
             // Validate the new item with the new value
-            var propertyResult = await this.Validator.ValidateProperty(updated, selector);
+            var propertyResult = await this.Validator.ValidateProperty(current, selector);
 
             // Add failures obtained by the additional checks
             propertyResult.Failures.AddRange(result.Failures);

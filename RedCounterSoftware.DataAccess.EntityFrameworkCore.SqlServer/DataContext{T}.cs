@@ -93,7 +93,7 @@
                 return null;
             }
 
-            var lambda = selector.GetFilterExpression(value);
+            var lambda = filter.GetFilterExpression(id);
             var entity = await this.entitySet.SingleOrDefaultAsync(lambda, cancellationToken);
 
             if (entity == null)
@@ -102,8 +102,8 @@
             }
 
             var propertyName = selector.GetPropertyName();
-            typeof(T).GetProperty(propertyName, BindingFlags.Public).SetValue(entity, value);
-            await this.context.SaveChangesAsync(cancellationToken);
+            typeof(T).GetProperty(propertyName).SetValue(entity, value);
+            await this.Context.SaveChangesAsync(cancellationToken);
 
             return entity;
         }
