@@ -15,42 +15,42 @@
     public abstract class DataContext<T> : IDataContext<T>
         where T : class
     {
-        private readonly DbContext context;
-
         private readonly DbSet<T> entitySet;
 
         private bool disposedValue = false; // To detect redundant calls
 
         public DataContext(DbContext context)
         {
-            this.context = context ?? throw new ArgumentNullException(nameof(context));
-            this.entitySet = this.context.Set<T>();
+            this.Context = context ?? throw new ArgumentNullException(nameof(context));
+            this.entitySet = this.Context.Set<T>();
         }
 
-        public async Task<T> Add<TId>(Expression<Func<T, TId>> filter, TId id, T toAdd, CancellationToken cancellationToken = default)
+        protected DbContext Context { get; }
+
+        public virtual async Task<T> Add<TId>(Expression<Func<T, TId>> filter, TId id, T toAdd, CancellationToken cancellationToken = default)
         {
             var result = await this.entitySet.AddAsync(toAdd, cancellationToken);
-            await this.context.SaveChangesAsync(cancellationToken);
+            await this.Context.SaveChangesAsync(cancellationToken);
             return result.Entity;
         }
 
-        public Task<int> Count(CancellationToken cancellationToken = default)
+        public virtual Task<int> Count(CancellationToken cancellationToken = default)
         {
             return this.entitySet.CountAsync(cancellationToken);
         }
 
-        public async Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default)
+        public virtual async Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default)
         {
             var lambda = filter.GetFilterExpression(id);
             var entity = await this.entitySet.SingleOrDefaultAsync(lambda, cancellationToken);
             if (entity != null)
             {
                 this.entitySet.Remove(entity);
-                await this.context.SaveChangesAsync(cancellationToken);
+                await this.Context.SaveChangesAsync(cancellationToken);
             }
         }
 
-        public Task<bool> ExistsBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
+        public virtual Task<bool> ExistsBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
             if (selector == null)
             {
@@ -61,7 +61,7 @@
             return this.entitySet.AnyAsync(lambda, cancellationToken);
         }
 
-        public Task<T> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
+        public virtual Task<T> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
             if (selector == null)
             {
@@ -72,7 +72,7 @@
             return this.entitySet.SingleOrDefaultAsync(lambda, cancellationToken);
         }
 
-        public async Task<SearchResult<T>> GetByMultipleValues<TK>(Expression<Func<T, TK>> selector, TK[] values, CancellationToken cancellationToken = default)
+        public virtual async Task<SearchResult<T>> GetByMultipleValues<TK>(Expression<Func<T, TK>> selector, TK[] values, CancellationToken cancellationToken = default)
         {
             if (values == null || values.Length == 0)
             {
@@ -86,7 +86,7 @@
             return new SearchResult<T>(data.Count, data);
         }
 
-        public async Task<T> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
+        public virtual async Task<T> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
             if (id == null)
             {
@@ -139,7 +139,7 @@
             {
                 if (disposing)
                 {
-                    this.context.Dispose();
+                    this.Context.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
