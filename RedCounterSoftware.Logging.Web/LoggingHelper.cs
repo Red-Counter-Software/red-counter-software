@@ -50,7 +50,9 @@
                 throw new ArgumentNullException(nameof(claimsPrincipal));
             }
 
-            return logger.BeginScope(KeyValuePair.Create(CurrentUserKey, claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.Name).Value));
+            return logger.BeginScope(KeyValuePair.Create(
+                CurrentUserKey,
+                claimsPrincipal.HasClaim(c => c.Type == ClaimTypes.Name) ? claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.Name).Value : string.Empty));
         }
 
         public static IDisposable GetCommonScopes(this ILogger logger, HttpContext httpContext, ClaimsPrincipal claimsPrincipal)
