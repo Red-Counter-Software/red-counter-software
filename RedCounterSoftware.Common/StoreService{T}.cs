@@ -40,7 +40,7 @@
 
             if (exists)
             {
-                result.Failures.Add(new Failure(nameof(id), $"{nameof(T)} already exists", id));
+                result.Failures.Add(new Failure(nameof(id), $"{typeof(T).Name} with this id already exists", id));
             }
 
             await this.AddItemAdditionalChecks(toAdd, result, cancellationToken);
