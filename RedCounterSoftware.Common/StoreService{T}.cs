@@ -103,6 +103,11 @@
             return new Result<T>(patched, new List<Failure>());
         }
 
+        public Task<SearchResult<T>> Search(SearchParameters<T> searchParameters, CancellationToken cancellationToken = default)
+        {
+            return this.Context.Search(searchParameters, cancellationToken);
+        }
+
         protected abstract Task AddItemAdditionalChecks(T toAdd, Result<T> partialResult, CancellationToken cancellationToken = default);
 
         protected abstract Task<TK> PatchItemAdditionalChecks<TK>(T toPatch, Expression<Func<T, TK>> selector, TK value, Result<T> partialResult, CancellationToken cancellationToken = default);
