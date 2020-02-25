@@ -74,5 +74,13 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns a <see cref="Result{T}"/> indicating wether the operation was successful and the updated entity.</returns>
         Task<Result<T>> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Performs a search based on the provided parameters.
+        /// </summary>
+        /// <param name="searchParameters">The search parameters.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Returns the result of the search.</returns>
+        Task<SearchResult<T>> Search(SearchParameters<T> searchParameters, CancellationToken cancellationToken = default);
     }
 }

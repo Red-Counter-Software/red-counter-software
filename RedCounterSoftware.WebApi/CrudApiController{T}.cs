@@ -97,5 +97,7 @@
             var count = await this.StoreService.Count();
             return count;
         }
+
+        protected virtual Task<SearchResult<T>> Search(SearchParameters<T> searchParameters) => this.StoreService.Search(searchParameters);
     }
 }
