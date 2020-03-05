@@ -8,6 +8,7 @@
         {
             this.PropertyName = propertyName ?? throw new ArgumentNullException(nameof(propertyName));
             this.ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
+            this.AttemptedValue = string.Empty;
         }
 
         public Failure(string propertyName, string errorMessage, object attemptedValue)

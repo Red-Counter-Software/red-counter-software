@@ -15,7 +15,7 @@
     {
         public const string OriginalUserClaimType = "OriginalUser";
 
-        public static JwtModel BuildToken(IUser user, IPerson person, string securityKey, string issuer, string audience, string[] permissions, string impersonatingUser = null)
+        public static JwtModel BuildToken(IUser user, IPerson person, string securityKey, string issuer, string audience, string[] permissions, string impersonatingUser = "")
         {
             if (user == null)
             {

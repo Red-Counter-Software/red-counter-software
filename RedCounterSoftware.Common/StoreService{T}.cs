@@ -35,6 +35,11 @@
                 throw new ArgumentNullException(nameof(toAdd));
             }
 
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
             var result = await this.Validator.PerformValidation(toAdd);
             var exists = await this.Context.ExistsBy(filter, id, cancellationToken);
 
@@ -72,6 +77,11 @@
 
         public virtual async Task<Result<T>> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
+            if (selector == null)
+            {
+                throw new ArgumentNullException(nameof(selector));
+            }
+
             var current = await this.Context.GetBy(filter, id, cancellationToken);
 
             if (current == null)
@@ -86,7 +96,9 @@
             var updatedValue = await this.PatchItemAdditionalChecks(current, selector, value, result, cancellationToken);
 
             // Update the item with the new value
-            typeof(T).GetProperty(selector.GetPropertyName()).SetValue(current, updatedValue);
+#pragma warning disable SA1009 // Closing parenthesis should be spaced correctly
+            typeof(T).GetProperty(selector.GetPropertyName())!.SetValue(current, updatedValue);
+#pragma warning restore SA1009 // Closing parenthesis should be spaced correctly
 
             // Validate the new item with the new value
             var propertyResult = await this.Validator.ValidateProperty(current, selector);
