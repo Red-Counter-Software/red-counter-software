@@ -6,7 +6,7 @@
 
     public class Sha1PasswordCryptoService : IPasswordCryptoService
     {
-        public byte[] EncryptPassword(string password, string salt = null)
+        public byte[] EncryptPassword(string password, string salt = "")
         {
             if (string.IsNullOrEmpty(password))
             {

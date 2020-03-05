@@ -70,16 +70,27 @@
                 throw new ArgumentException("Cannot be empty", nameof(propertyName));
             }
 
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             var exp = propertyName.GetPropertyExpression<T>();
+            if (exp == null)
+            {
+                throw new InvalidOperationException($"Failed to retrieve the property expression from property {propertyName}");
+            }
+
             var type = Nullable.GetUnderlyingType(exp.GetPropertyType()) ?? exp.GetPropertyType();
             object changedValue;
+
             if (type.IsEnum)
             {
-                changedValue = Enum.Parse(type, value.ToString());
+                changedValue = Enum.Parse(type, value.ToString() ?? throw new InvalidOperationException($"Failed to convert to string value {value}"));
             }
             else
             {
-                changedValue = (value == null) ? null : Convert.ChangeType(value, type);
+                changedValue = Convert.ChangeType(value, type);
             }
 
             using (this.logger.BeginScope(LoggingEvents.Crud))

@@ -12,6 +12,8 @@
     {
         public SearchParameters()
         {
+            this.SearchTerm = string.Empty;
+            this.SortTerm = string.Empty;
         }
 
         public SearchParameters(string searchTerm, string sortTerm, bool isDescending = false, int pageSize = 10, int currentPage = 0)

@@ -4,6 +4,12 @@
 
     public class JwtModel
     {
+        public JwtModel()
+        {
+            this.Token = string.Empty;
+            this.LightweightToken = string.Empty;
+        }
+
         public DateTime ExpiresAt { get; set; }
 
         public string Token { get; set; }

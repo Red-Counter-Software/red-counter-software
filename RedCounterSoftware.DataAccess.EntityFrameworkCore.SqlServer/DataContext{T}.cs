@@ -90,7 +90,7 @@
         {
             if (id == null)
             {
-                return null;
+                throw new ArgumentNullException(nameof(id));
             }
 
             var lambda = filter.GetFilterExpression(id);
@@ -98,11 +98,13 @@
 
             if (entity == null)
             {
-                return null;
+                throw new InvalidOperationException($"Entity with id {id} was not found.");
             }
 
             var propertyName = selector.GetPropertyName();
-            typeof(T).GetProperty(propertyName).SetValue(entity, value);
+#pragma warning disable SA1009 // Closing parenthesis should be spaced correctly
+            typeof(T).GetProperty(propertyName)!.SetValue(entity, value);
+#pragma warning restore SA1009 // Closing parenthesis should be spaced correctly
             await this.Context.SaveChangesAsync(cancellationToken);
 
             return entity;

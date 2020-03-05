@@ -11,6 +11,6 @@
         /// <param name="password">The password to encrypt.</param>
         /// <param name="salt">The optional salt.</param>
         /// <returns>Returns the encrypted password in the form of <see cref="byte"/> array.</returns>
-        byte[] EncryptPassword(string password, string salt = null);
+        byte[] EncryptPassword(string password, string salt = "");
     }
 }

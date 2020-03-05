@@ -208,7 +208,7 @@
                 throw new ArgumentNullException(nameof(loginModel));
             }
 
-            var roles = includeRoles ? (await this.roleService.GetByUserId(user.Id)).SelectMany(c => c.Claims).ToArray() : null;
+            var roles = includeRoles ? (await this.roleService.GetByUserId(user.Id)).SelectMany(c => c.Claims).ToArray() : new string[] { };
             var person = await this.personService.GetById(user.PersonId, CancellationToken.None);
             var token = JwtHelper.BuildToken(user, person, this.jwtKey, this.jwtIssuer, this.jwtAudience, roles);
 
