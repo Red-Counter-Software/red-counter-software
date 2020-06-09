@@ -105,7 +105,9 @@
 
                 if (property.Name.Equals(propertyToBeMutated, StringComparison.OrdinalIgnoreCase))
                 {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                     value = mutator.Invoke(item, (T2)value);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
                 }
 
                 values[i] = value ?? throw new InvalidOperationException("The mutated property is null");
