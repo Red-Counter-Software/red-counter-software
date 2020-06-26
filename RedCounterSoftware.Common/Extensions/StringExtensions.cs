@@ -27,7 +27,7 @@
                 return s.ToLowerInvariant();
             }
 
-            var words = s.Split('.', StringSplitOptions.RemoveEmptyEntries);
+            var words = s.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
             return words
                 .Select(w => $"{w.Substring(0, 1).ToLowerInvariant()}{w.Substring(1)}")
                 .Aggregate((w1, w2) => $"{w1}.{w2}");
