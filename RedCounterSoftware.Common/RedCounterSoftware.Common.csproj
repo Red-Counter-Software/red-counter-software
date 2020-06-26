@@ -9,7 +9,7 @@
     <Company>Red Counter Software</Company>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <Copyright>Copyright © 2019 Red Counter Software. All rights reserved.</Copyright>
-    <RepositoryUrl>https://github.com/matteo-mosca/red-counter-software</RepositoryUrl>
+    <RepositoryUrl>https://bitbucket.org/red-counter-software/red-counter-software</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Version>3.2.0</Version>
