@@ -10,7 +10,7 @@
     <Authors>Matteo Mosca</Authors>
     <Copyright>Copyright © 2019 Red Counter Software. All rights reserved.</Copyright>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/matteo-mosca/red-counter-software</RepositoryUrl>
+    <RepositoryUrl>https://bitbucket.org/red-counter-software/red-counter-software</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <Version>3.2.0</Version>
     <Nullable>enable</Nullable>
