@@ -12,7 +12,7 @@
     <RepositoryUrl>https://bitbucket.org/red-counter-software/red-counter-software</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>3.2.1</Version>
+    <Version>3.3.0</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
