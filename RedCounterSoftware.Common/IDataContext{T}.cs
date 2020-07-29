@@ -25,6 +25,16 @@
         Task<T> Add<TId>(Expression<Func<T, TId>> filter, TId id, T toAdd, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Adds multiple instances of <see cref="T"/> to the underlying storage in a single transaction.
+        /// </summary>
+        /// <typeparam name="TId">The type of the Id property.</typeparam>
+        /// <param name="filter">The expression to filter by Id.</param>
+        /// <param name="toAdd">Entities to add.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Returns the added entities.</returns>
+        Task<T[]> AddBulk<TId>(Expression<Func<T, TId>> filter, T[] toAdd, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Returns a total count of the elements of type <see cref="T"/> in the storage.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>

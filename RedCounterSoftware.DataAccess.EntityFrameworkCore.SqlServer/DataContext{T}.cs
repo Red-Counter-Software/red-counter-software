@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
-    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -32,6 +31,20 @@
             var result = await this.entitySet.AddAsync(toAdd, cancellationToken);
             await this.Context.SaveChangesAsync(cancellationToken);
             return result.Entity;
+        }
+
+        public async Task<T[]> AddBulk<TId>(Expression<Func<T, TId>> filter, T[] toAdd, CancellationToken cancellationToken = default)
+        {
+            var results = new List<T>();
+            foreach (var item in toAdd)
+            {
+                var result = await this.entitySet.AddAsync(item, cancellationToken);
+                results.Add(result.Entity);
+            }
+
+            await this.Context.SaveChangesAsync(cancellationToken);
+
+            return results.ToArray();
         }
 
         public virtual Task<int> Count(CancellationToken cancellationToken = default)
