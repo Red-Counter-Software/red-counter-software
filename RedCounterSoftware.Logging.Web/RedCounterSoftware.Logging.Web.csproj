@@ -12,7 +12,7 @@
     <RepositoryType>Git</RepositoryType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>3.3.0</Version>
+    <Version>3.4.0</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
