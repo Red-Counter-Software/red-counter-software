@@ -17,6 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.WebApi",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.Mailing.SendGrid", "RedCounterSoftware.Mailing.SendGrid\RedCounterSoftware.Mailing.SendGrid.csproj", "{BC4D4171-D17D-4222-A25B-59ECF596ABB4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{5A264499-25D4-4744-A47A-13C65C8AE0B0}"
+	ProjectSection(SolutionItems) = preProject
+		ca.ruleset = ca.ruleset
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
