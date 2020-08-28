@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.Common", "RedCounterSoftware.Common\RedCounterSoftware.Common.csproj", "{A4FCAF5C-76D6-4E0B-A78F-3916314A2E52}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.Validation.FluentValidation", "RedCounterSoftware.Validation\RedCounterSoftware.Validation.FluentValidation.csproj", "{636F4C61-076F-4D19-B5BE-5EFE5FD18DB1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.Logging.Web", "RedCounterSoftware.Logging.Web\RedCounterSoftware.Logging.Web.csproj", "{78786B05-976C-4718-A727-9AC4367EFAF4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.Security.Jwt", "RedCounterSoftware.Security.Jwt\RedCounterSoftware.Security.Jwt.csproj", "{6E65800F-9B35-4282-8DB5-2DDC0DCE3B9B}"
@@ -22,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{5A264499
 		ca.ruleset = ca.ruleset
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.Validation.FluentValidation", "RedCounterSoftware.Validation.FluentValidation\RedCounterSoftware.Validation.FluentValidation.csproj", "{BD96622E-C1DB-4140-9580-6302D65B52B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,10 +32,6 @@ Global
 		{A4FCAF5C-76D6-4E0B-A78F-3916314A2E52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4FCAF5C-76D6-4E0B-A78F-3916314A2E52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4FCAF5C-76D6-4E0B-A78F-3916314A2E52}.Release|Any CPU.Build.0 = Release|Any CPU
-		{636F4C61-076F-4D19-B5BE-5EFE5FD18DB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{636F4C61-076F-4D19-B5BE-5EFE5FD18DB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{636F4C61-076F-4D19-B5BE-5EFE5FD18DB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{636F4C61-076F-4D19-B5BE-5EFE5FD18DB1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{78786B05-976C-4718-A727-9AC4367EFAF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{78786B05-976C-4718-A727-9AC4367EFAF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78786B05-976C-4718-A727-9AC4367EFAF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -56,6 +52,10 @@ Global
 		{BC4D4171-D17D-4222-A25B-59ECF596ABB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC4D4171-D17D-4222-A25B-59ECF596ABB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC4D4171-D17D-4222-A25B-59ECF596ABB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD96622E-C1DB-4140-9580-6302D65B52B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD96622E-C1DB-4140-9580-6302D65B52B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD96622E-C1DB-4140-9580-6302D65B52B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD96622E-C1DB-4140-9580-6302D65B52B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
