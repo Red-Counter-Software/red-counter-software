@@ -1,0 +1,60 @@
+name: .NET Core
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.401
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+    - name: Publish Common
+      uses: brandedoutcast/publish-nuget@v2.5.2
+      with:
+          PROJECT_FILE_PATH: RedCounterSoftware.Common/RedCounterSoftware.Common.csproj
+          NUGET_KEY: ${{secrets.NuGet}}
+    - name: Publish DataAccess.EntityFrameworkCore.SqlServer
+      uses: brandedoutcast/publish-nuget@v2.5.2
+      with:
+          PROJECT_FILE_PATH: RedCounterSoftware.DataAccess.EntityFrameworkCore.SqlServer/RedCounterSoftware.DataAccess.EntityFrameworkCore.SqlServer.csproj
+          NUGET_KEY: ${{secrets.NuGet}}
+    - name: Publish Logging.Web
+      uses: brandedoutcast/publish-nuget@v2.5.2
+      with:
+          PROJECT_FILE_PATH: RedCounterSoftware.Logging.Web/RedCounterSoftware.Logging.Web.csproj
+          NUGET_KEY: ${{secrets.NuGet}}
+    - name: Publish Mailing.SendGrid
+      uses: brandedoutcast/publish-nuget@v2.5.2
+      with:
+          PROJECT_FILE_PATH: RedCounterSoftware.Mailing.SendGrid/RedCounterSoftware.Mailing.SendGrid.csproj
+          NUGET_KEY: ${{secrets.NuGet}}
+    - name: Publish Security.Jwt
+      uses: brandedoutcast/publish-nuget@v2.5.2
+      with:
+          PROJECT_FILE_PATH: RedCounterSoftware.Security.Jwt/RedCounterSoftware.Security.Jwt.csproj
+          NUGET_KEY: ${{secrets.NuGet}}
+    - name: Publish Validation.FluentValidation
+      uses: brandedoutcast/publish-nuget@v2.5.2
+      with:
+          PROJECT_FILE_PATH: RedCounterSoftware.Validation.FluentValidation/RedCounterSoftware.Validation.FluentValidation.csproj
+          NUGET_KEY: ${{secrets.NuGet}}
+    - name: Publish WebApi
+      uses: brandedoutcast/publish-nuget@v2.5.2
+      with:
+          PROJECT_FILE_PATH: RedCounterSoftware.WebApi/RedCounterSoftware.WebApi.csproj
+          NUGET_KEY: ${{secrets.NuGet}}
