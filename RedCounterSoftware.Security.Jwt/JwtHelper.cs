@@ -44,7 +44,7 @@
 
             if (permissions == null)
             {
-                permissions = new string[] { };
+                permissions = Array.Empty<string>();
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
@@ -65,6 +65,13 @@
 
         private static IEnumerable<Claim> BuildClaims(IUser user, IPerson person, string[] permissions, string impersonatingUser)
         {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            var userId = user.Id.ToString() ?? string.Empty;
+
             List<Claim> claims;
 
             // Lightweight token
@@ -72,7 +79,7 @@
             {
                 claims = new List<Claim>
                 {
-                    new Claim(JwtRegisteredClaimNames.UniqueName, user.Id.ToString())
+                    new Claim(JwtRegisteredClaimNames.UniqueName, userId)
                 };
             }
 
@@ -83,7 +90,7 @@
                 {
                     new Claim(JwtRegisteredClaimNames.Birthdate, person.BirthDate.ToString(CultureInfo.InvariantCulture)),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim(JwtRegisteredClaimNames.UniqueName, user.Id.ToString())
+                    new Claim(JwtRegisteredClaimNames.UniqueName, userId)
                 };
 
                 claims.AddRange(permissions.Select(permission => new Claim(ClaimTypes.Role, permission)));

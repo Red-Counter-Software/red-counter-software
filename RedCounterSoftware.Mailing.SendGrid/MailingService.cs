@@ -6,6 +6,7 @@ using SendGrid.Helpers.Mail;
 namespace RedCounterSoftware.Mailing.SendGrid
 {
     using System;
+    using System.Globalization;
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
@@ -16,51 +17,46 @@ namespace RedCounterSoftware.Mailing.SendGrid
     {
         private readonly string sendGridApiKey;
 
-        private readonly string baseUrl;
+        private readonly Uri baseUrl;
 
-        public MailingService(string sendGridApiKey, string baseUrl)
+        public MailingService(string sendGridApiKey, Uri baseUrl)
         {
             if (string.IsNullOrEmpty(sendGridApiKey))
             {
                 throw new ArgumentException("Cannot be empty", nameof(sendGridApiKey));
             }
 
-            if (string.IsNullOrEmpty(baseUrl))
-            {
-                throw new ArgumentException("Cannot be empty", nameof(baseUrl));
-            }
-
             this.sendGridApiKey = sendGridApiKey;
 
-            this.baseUrl = baseUrl;
+            this.baseUrl = baseUrl ?? throw new ArgumentException("Cannot be empty", nameof(baseUrl));
         }
 
         public async Task SendActivationEmail(string email, Guid activationGuid, string subject, string textBody, string htmlBody, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(email))
             {
-                throw new ArgumentException(nameof(email));
+                throw new ArgumentNullException(nameof(email));
             }
 
             if (activationGuid == Guid.Empty)
             {
-                throw new ArgumentException(nameof(activationGuid));
+                throw new ArgumentNullException(nameof(activationGuid));
             }
 
             var client = new SendGridClient(this.sendGridApiKey);
             var from = new EmailAddress("noreply@steelchihuahua.com", "NoReply");
             var to = new EmailAddress(email);
-            var plainTextContent = string.Format(textBody, this.baseUrl, activationGuid);
-            var url = string.Format("<a href=\"{0}/public/user/activate/{1}\">link</a>", this.baseUrl, activationGuid);
-            var htmlContent = string.Format(htmlBody, url);
+            var plainTextContent = string.Format(CultureInfo.InvariantCulture, textBody, this.baseUrl, activationGuid);
+            var url = string.Format(CultureInfo.InvariantCulture, "<a href=\"{0}/public/user/activate/{1}\">link</a>", this.baseUrl, activationGuid);
+            var htmlContent = string.Format(CultureInfo.InvariantCulture, htmlBody, url);
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-            var response = await client.SendEmailAsync(msg, cancellationToken);
+            var response = await client.SendEmailAsync(msg, cancellationToken).ConfigureAwait(false);
             if (response.StatusCode != HttpStatusCode.Accepted)
             {
-                var body = await response.DeserializeResponseBodyAsync(response.Body);
+                var body = await response.DeserializeResponseBodyAsync(response.Body).ConfigureAwait(false);
                 var error =
                     $"Error while using Sendgrid service. Status code: {response.StatusCode} - Error details: {body}";
-                throw new Exception(error);
+                throw new InvalidOperationException(error);
             }
         }
 
@@ -68,33 +64,29 @@ namespace RedCounterSoftware.Mailing.SendGrid
         {
             if (string.IsNullOrEmpty(email))
             {
-                throw new ArgumentException(nameof(email));
+                throw new ArgumentNullException(nameof(email));
             }
 
             if (passwordResetGuid == Guid.Empty)
             {
-                throw new ArgumentException(nameof(passwordResetGuid));
+                throw new ArgumentNullException(nameof(passwordResetGuid));
             }
 
             var client = new SendGridClient(this.sendGridApiKey);
             var from = new EmailAddress("noreply@steelchihuahua.com", "NoReply");
             var to = new EmailAddress(email);
-            var plainTextContent = string.Format(textBody, this.baseUrl, passwordResetGuid);
-            var url = string.Format("<a href=\"{0}/public/user/password-reset/{1}\">link</a>", this.baseUrl, passwordResetGuid);
-            var htmlContent = string.Format(htmlBody, url);
+            var plainTextContent = string.Format(CultureInfo.InvariantCulture, textBody, this.baseUrl, passwordResetGuid);
+            var url = string.Format(CultureInfo.InvariantCulture, "<a href=\"{0}/public/user/password-reset/{1}\">link</a>", this.baseUrl, passwordResetGuid);
+            var htmlContent = string.Format(CultureInfo.InvariantCulture, htmlBody, url);
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-            var response = await client.SendEmailAsync(msg, cancellationToken);
+            var response = await client.SendEmailAsync(msg, cancellationToken).ConfigureAwait(false);
             if (response.StatusCode != HttpStatusCode.Accepted)
             {
-                var body = await response.DeserializeResponseBodyAsync(response.Body);
+                var body = await response.DeserializeResponseBodyAsync(response.Body).ConfigureAwait(false);
                 var error =
                     $"Error while using Sendgrid service. Status code: {response.StatusCode} - Error details: {body}";
-                throw new Exception(error);
+                throw new InvalidOperationException(error);
             }
-        }
-
-        public void Dispose()
-        {
         }
     }
 }

@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
     using System.Security.Claims;
 
@@ -21,86 +20,52 @@
 
         public static IDisposable ScopeRemoteIp(this ILogger logger, HttpContext httpContext)
         {
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
             if (httpContext == null)
             {
                 throw new ArgumentNullException(nameof(httpContext));
             }
 
-            var remoteIp = httpContext.Connection.RemoteIpAddress.ToString();
+            var remoteIp = httpContext.Connection?.RemoteIpAddress?.ToString();
             remoteIp = remoteIp == "::1" ? "127.0.0.1" : remoteIp;
             return logger.BeginScope(KeyValuePair.Create(RemoteAddressKey, remoteIp));
         }
 
         public static IDisposable ScopeImpersonator(this ILogger logger, ClaimsPrincipal claimsPrincipal)
         {
-            if (claimsPrincipal == null)
-            {
-                throw new ArgumentNullException(nameof(claimsPrincipal));
-            }
-
-            return logger.BeginScope(KeyValuePair.Create(
+            return logger == null
+                ? throw new ArgumentNullException(nameof(logger))
+                : claimsPrincipal == null
+                ? throw new ArgumentNullException(nameof(claimsPrincipal))
+                : logger.BeginScope(KeyValuePair.Create(
                 ImpersonatorKey,
                 claimsPrincipal.HasClaim(c => c.Type == OriginalUserKey) ? claimsPrincipal.Claims.Single(c => c.Type == OriginalUserKey).Value : string.Empty));
         }
 
         public static IDisposable ScopeCurrentUser(this ILogger logger, ClaimsPrincipal claimsPrincipal)
         {
-            if (claimsPrincipal == null)
-            {
-                throw new ArgumentNullException(nameof(claimsPrincipal));
-            }
-
-            return logger.BeginScope(KeyValuePair.Create(
+            return logger == null
+                ? throw new ArgumentNullException(nameof(logger))
+                : claimsPrincipal == null
+                ? throw new ArgumentNullException(nameof(claimsPrincipal))
+                : logger.BeginScope(KeyValuePair.Create(
                 CurrentUserKey,
                 claimsPrincipal.HasClaim(c => c.Type == ClaimTypes.Name) ? claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.Name).Value : string.Empty));
         }
 
         public static IDisposable GetCommonScopes(this ILogger logger, HttpContext httpContext, ClaimsPrincipal claimsPrincipal)
         {
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException(nameof(httpContext));
-            }
-
-            if (claimsPrincipal == null)
-            {
-                throw new ArgumentNullException(nameof(claimsPrincipal));
-            }
-
-            return new LoggingScopes(logger, httpContext, claimsPrincipal);
-        }
-
-        public class LoggingScopes : IDisposable
-        {
-            private readonly IDisposable remoteIp;
-
-            private readonly IDisposable impersonator;
-
-            private readonly IDisposable currentUser;
-
-            public LoggingScopes(ILogger logger, HttpContext httpContext, ClaimsPrincipal claimsPrincipal)
-            {
-                if (httpContext == null)
-                {
-                    throw new ArgumentNullException(nameof(httpContext));
-                }
-
-                if (claimsPrincipal == null)
-                {
-                    throw new ArgumentNullException(nameof(claimsPrincipal));
-                }
-
-                this.remoteIp = logger.ScopeRemoteIp(httpContext);
-                this.impersonator = logger.ScopeImpersonator(claimsPrincipal);
-                this.currentUser = logger.ScopeCurrentUser(claimsPrincipal);
-            }
-
-            public void Dispose()
-            {
-                this.remoteIp?.Dispose();
-                this.impersonator?.Dispose();
-                this.currentUser?.Dispose();
-            }
+            return logger == null
+                ? throw new ArgumentNullException(nameof(logger))
+                : httpContext == null
+                ? throw new ArgumentNullException(nameof(httpContext))
+                : (claimsPrincipal == null
+                ? throw new ArgumentNullException(nameof(claimsPrincipal))
+                : new LoggingScopes(logger, httpContext, claimsPrincipal));
         }
     }
 }

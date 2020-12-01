@@ -3,9 +3,9 @@
     using System;
     using System.Globalization;
     using System.Linq.Expressions;
-    using System.Threading.Tasks;
 
-    using Microsoft.AspNetCore.Mvc;
+    using System.Threading.Tasks;
+    using Microsoft.AspNet.OData;
     using Microsoft.Extensions.Logging;
     using RedCounterSoftware.Common;
     using RedCounterSoftware.Common.Extensions;
@@ -13,13 +13,12 @@
     using RedCounterSoftware.Common.Validation;
     using RedCounterSoftware.Logging.Web;
 
-    [ApiController]
-    public abstract class CrudApiController<T> : ControllerBase
+    public abstract class CrudODataController<T> : ODataController
         where T : class
     {
         private readonly ILogger logger;
 
-        protected CrudApiController(IStoreService<T> storeService, ILogger logger)
+        protected CrudODataController(IStoreService<T> storeService, ILogger logger)
         {
             this.StoreService = storeService ?? throw new ArgumentNullException(nameof(storeService));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));

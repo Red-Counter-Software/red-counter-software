@@ -25,6 +25,11 @@
 
         public static IEnumerable<T1> With<T1, T2>(this IEnumerable<T1> source, Expression<Func<T1, T2>> selector, Func<T1, T2, T2> mutator)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
             var (constructor, parameters, properties, propertyToBeMutated) = GetInfo(selector);
 
             foreach (var item in source)

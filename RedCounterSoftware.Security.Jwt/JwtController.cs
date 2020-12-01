@@ -77,7 +77,7 @@
         }
 
         [HttpPost("activate")]
-        public async Task<IActionResult> ActivateUser([FromBody]ActivateUserModel model)
+        public async Task<IActionResult> ActivateUser([FromBody] ActivateUserModel model)
         {
             if (model == null)
             {
@@ -87,7 +87,7 @@
             using (this.logger.BeginScope(LoggingEvents.Activation))
             using (this.logger.ScopeRemoteIp(this.HttpContext))
             {
-                var result = await this.authenticationService.Activate(model.Id);
+                var result = await this.authenticationService.Activate(model.Id).ConfigureAwait(false);
 
                 if (!result.IsValid)
                 {
@@ -95,14 +95,14 @@
                     return this.NotFound();
                 }
 
-                await this.authenticationService.SetPassword(result.Item.Id, model.Password);
+                _ = await this.authenticationService.SetPassword(result.Item.Id, model.Password).ConfigureAwait(false);
                 this.logger.LogInformation(LoggingEvents.ActivationOk, "User {user} with activation code [{code}] created a password and activated succesfully", result.Item.Email, model.Id);
                 return this.Ok();
             }
         }
 
         [HttpPost("createtoken")]
-        public async Task<IActionResult> CreateToken([FromBody]LoginModel loginModel)
+        public async Task<IActionResult> CreateToken([FromBody] LoginModel loginModel)
         {
             if (loginModel == null)
             {
@@ -114,7 +114,7 @@
             {
                 this.logger.LogInformation(LoggingEvents.Authentication, "JWT Token requested for user {user}", loginModel.Username);
 
-                var isAuthorized = await this.authenticationService.IsPasswordValid(loginModel.Username, loginModel.Password);
+                var isAuthorized = await this.authenticationService.IsPasswordValid(loginModel.Username, loginModel.Password).ConfigureAwait(false);
 
                 if (!isAuthorized)
                 {
@@ -122,9 +122,9 @@
                     return this.Unauthorized();
                 }
 
-                var user = await this.authenticationService.GetByEmail(loginModel.Username, CancellationToken.None);
+                var user = await this.authenticationService.GetByEmail(loginModel.Username, CancellationToken.None).ConfigureAwait(false);
 
-                var isValidStatus = await this.authenticationService.IsUserActive(user);
+                var isValidStatus = await this.authenticationService.IsUserActive(user).ConfigureAwait(false);
 
                 if (!isValidStatus)
                 {
@@ -132,8 +132,8 @@
                     return this.Forbid();
                 }
 
-                var token = await this.CreateToken(loginModel, user, true);
-                var lightweightToken = await this.CreateToken(loginModel, user, false);
+                var token = await this.CreateToken(loginModel, user, true).ConfigureAwait(false);
+                var lightweightToken = await this.CreateToken(loginModel, user, false).ConfigureAwait(false);
 
                 return this.Ok(new JwtModel { ExpiresAt = token.ExpiresAt, Token = token.Token, LightweightToken = lightweightToken.Token });
             }
@@ -150,7 +150,7 @@
             using (this.logger.BeginScope(LoggingEvents.ResetPassword))
             using (this.logger.ScopeRemoteIp(this.HttpContext))
             {
-                var user = await this.authenticationService.GetByEmail(model.Email, CancellationToken.None);
+                var user = await this.authenticationService.GetByEmail(model.Email, CancellationToken.None).ConfigureAwait(false);
                 if (user == null)
                 {
                     this.logger.LogInformation(LoggingEvents.ResetPassword, "Attempted to reset password for non existing user {user}", model.Email);
@@ -160,12 +160,12 @@
                 }
 
                 var guid = Guid.NewGuid();
-                var result = await this.authenticationService.SetPasswordResetGuid(user.Id, guid, CancellationToken.None);
+                var result = await this.authenticationService.SetPasswordResetGuid(user.Id, guid, CancellationToken.None).ConfigureAwait(false);
                 this.logger.LogInformation(LoggingEvents.ResetPassword, "Set password reset guid for user {user} to [{id}]", model.Email, guid);
 
                 user = result.Item;
 
-                await this.mailingService.SendPasswordRecoveryMail(user.Email, guid, this.passwordResetSubject, this.passwordResetTextBody, this.passwordResetHtmlBody, CancellationToken.None);
+                await this.mailingService.SendPasswordRecoveryMail(user.Email, guid, this.passwordResetSubject, this.passwordResetTextBody, this.passwordResetHtmlBody, CancellationToken.None).ConfigureAwait(false);
                 this.logger.LogInformation(LoggingEvents.ResetPassword, "Reset password email sent for user {user} with reset guid [{id}]", model.Email, guid);
 
                 return this.Ok();
@@ -183,14 +183,14 @@
             using (this.logger.BeginScope(LoggingEvents.ResetPassword))
             using (this.logger.ScopeRemoteIp(this.HttpContext))
             {
-                var user = await this.authenticationService.GetByPasswordResetGuid(model.Id, CancellationToken.None);
+                var user = await this.authenticationService.GetByPasswordResetGuid(model.Id, CancellationToken.None).ConfigureAwait(false);
                 if (user == null)
                 {
                     this.logger.LogInformation("No user found with matching password reset guid [{id}]", model.Id);
                     return this.NotFound();
                 }
 
-                var result = await this.authenticationService.SetPassword(user.Id, model.Password, CancellationToken.None);
+                var result = await this.authenticationService.SetPassword(user.Id, model.Password, CancellationToken.None).ConfigureAwait(false);
                 if (result.IsValid)
                 {
                     return this.Ok();
@@ -208,8 +208,8 @@
                 throw new ArgumentNullException(nameof(loginModel));
             }
 
-            var roles = includeRoles ? (await this.roleService.GetByUserId(user.Id)).SelectMany(c => c.Claims).ToArray() : new string[] { };
-            var person = await this.personService.GetById(user.PersonId, CancellationToken.None);
+            var roles = includeRoles ? (await this.roleService.GetByUserId(user.Id).ConfigureAwait(false)).SelectMany(c => c.Claims).ToArray() : Array.Empty<string>();
+            var person = await this.personService.GetById(user.PersonId, CancellationToken.None).ConfigureAwait(false);
             var token = JwtHelper.BuildToken(user, person, this.jwtKey, this.jwtIssuer, this.jwtAudience, roles);
 
             this.logger.LogInformation(LoggingEvents.AuthenticationOk, "Jwt Token created for user {user}", loginModel.Username);

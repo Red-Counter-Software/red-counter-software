@@ -16,9 +16,9 @@
     {
         private readonly DbSet<T> entitySet;
 
-        private bool disposedValue = false; // To detect redundant calls
+        private bool disposedValue; // To detect redundant calls
 
-        public DataContext(DbContext context)
+        protected DataContext(DbContext context)
         {
             this.Context = context ?? throw new ArgumentNullException(nameof(context));
             this.entitySet = this.Context.Set<T>();
@@ -28,21 +28,26 @@
 
         public virtual async Task<T> Add<TId>(Expression<Func<T, TId>> filter, TId id, T toAdd, CancellationToken cancellationToken = default)
         {
-            var result = await this.entitySet.AddAsync(toAdd, cancellationToken);
-            await this.Context.SaveChangesAsync(cancellationToken);
+            var result = await this.entitySet.AddAsync(toAdd, cancellationToken).ConfigureAwait(false);
+            _ = await this.Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return result.Entity;
         }
 
         public async Task<T[]> AddBulk<TId>(Expression<Func<T, TId>> filter, T[] toAdd, CancellationToken cancellationToken = default)
         {
+            if (toAdd == null)
+            {
+                throw new ArgumentNullException(nameof(toAdd));
+            }
+
             var results = new List<T>();
             foreach (var item in toAdd)
             {
-                var result = await this.entitySet.AddAsync(item, cancellationToken);
+                var result = await this.entitySet.AddAsync(item, cancellationToken).ConfigureAwait(false);
                 results.Add(result.Entity);
             }
 
-            await this.Context.SaveChangesAsync(cancellationToken);
+            _ = await this.Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             return results.ToArray();
         }
@@ -55,11 +60,11 @@
         public virtual async Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default)
         {
             var lambda = filter.GetFilterExpression(id);
-            var entity = await this.entitySet.SingleOrDefaultAsync(lambda, cancellationToken);
+            var entity = await this.entitySet.SingleOrDefaultAsync(lambda, cancellationToken).ConfigureAwait(false);
             if (entity != null)
             {
-                this.entitySet.Remove(entity);
-                await this.Context.SaveChangesAsync(cancellationToken);
+                _ = this.entitySet.Remove(entity);
+                _ = await this.Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -94,7 +99,7 @@
 
             var filter = selector.InExpression(values);
 
-            var data = await this.entitySet.Where(filter).ToListAsync(cancellationToken);
+            var data = await this.entitySet.Where(filter).ToListAsync(cancellationToken).ConfigureAwait(false);
 
             return new SearchResult<T>(data.Count, data);
         }
@@ -107,7 +112,7 @@
             }
 
             var lambda = filter.GetFilterExpression(id);
-            var entity = await this.entitySet.SingleOrDefaultAsync(lambda, cancellationToken);
+            var entity = await this.entitySet.SingleOrDefaultAsync(lambda, cancellationToken).ConfigureAwait(false);
 
             if (entity == null)
             {
@@ -118,7 +123,7 @@
 #pragma warning disable SA1009 // Closing parenthesis should be spaced correctly
             typeof(T).GetProperty(propertyName)!.SetValue(entity, value);
 #pragma warning restore SA1009 // Closing parenthesis should be spaced correctly
-            await this.Context.SaveChangesAsync(cancellationToken);
+            _ = await this.Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             return entity;
         }
@@ -136,13 +141,18 @@
             this.Dispose(true);
 
             // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
 
         protected abstract IQueryable<T> ComposeSearch(SearchParameters<T> searchParameters);
 
         protected virtual SearchResult<T> SearchFilters(IQueryable<T> queryable, SearchParameters<T> searchParameters)
         {
+            if (searchParameters == null)
+            {
+                throw new ArgumentNullException(nameof(searchParameters));
+            }
+
             var ordered = searchParameters.IsDescending ? queryable.OrderByDescending(searchParameters.SortExpression) : queryable.OrderBy(searchParameters.SortExpression);
             var paged = ordered.Skip(searchParameters.PageSize * searchParameters.CurrentPage).Take(searchParameters.PageSize);
             return new SearchResult<T>(queryable.Count(), paged.ToList());

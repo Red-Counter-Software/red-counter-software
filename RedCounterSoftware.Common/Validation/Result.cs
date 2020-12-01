@@ -1,13 +1,13 @@
 ﻿namespace RedCounterSoftware.Common.Validation
 {
     using System;
-    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using Extensions;
 
     public class Result
     {
-        public Result(List<Failure> failures, int? index = null)
+        public Result(Collection<Failure> failures, int? index = null)
         {
             this.Failures = failures ?? throw new ArgumentNullException(nameof(failures));
             this.Index = index;
@@ -17,7 +17,7 @@
 
         public bool IsValid => !this.Failures.Any();
 
-        public List<Failure> Failures { get; }
+        public Collection<Failure> Failures { get; }
 
         public string FormatFailuresForLog()
         {
@@ -29,10 +29,7 @@
 
         public Result ToCamelCasedPropertiesResult()
         {
-            return new Result(
-                this.Failures
-                    .Select(f => new Failure(f.PropertyName.ToCamelCase(), f.ErrorMessage, f.AttemptedValue))
-                    .ToList());
+            return new Result(new Collection<Failure>(this.Failures.Select(f => new Failure(f.PropertyName.ToCamelCase(), f.ErrorMessage, f.AttemptedValue)).ToList()));
         }
     }
 }

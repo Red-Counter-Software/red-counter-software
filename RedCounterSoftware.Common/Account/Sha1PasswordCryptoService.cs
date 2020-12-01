@@ -13,15 +13,15 @@
                 throw new ArgumentException("Cannot be empty", nameof(password));
             }
 
-            if (salt == string.Empty)
+            if (string.IsNullOrEmpty(salt))
             {
                 throw new ArgumentException("Salt cannot be an empty string", nameof(salt));
             }
 
-            var toEncrypt = salt != null ? password + salt.ToLowerInvariant() : password;
+            var toEncrypt = password + salt.ToUpperInvariant();
 
             var data = Encoding.ASCII.GetBytes(toEncrypt);
-            var sha1 = new SHA1CryptoServiceProvider();
+            using var sha1 = new SHA256CryptoServiceProvider();
             var sha1Data = sha1.ComputeHash(data);
             return sha1Data;
         }
