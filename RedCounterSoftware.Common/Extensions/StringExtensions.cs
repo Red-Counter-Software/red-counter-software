@@ -24,12 +24,16 @@
 
             if (s.Length == 1)
             {
+#pragma warning disable CA1308 // Normalize strings to uppercase
                 return s.ToLowerInvariant();
+#pragma warning restore CA1308 // Normalize strings to uppercase
             }
 
             var words = s.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
             return words
-                .Select(w => $"{w.Substring(0, 1).ToLowerInvariant()}{w.Substring(1)}")
+#pragma warning disable CA1308 // Normalize strings to uppercase
+                .Select(w => $"{w.Substring(0, 1).ToLowerInvariant()}{w[1..]}")
+#pragma warning restore CA1308 // Normalize strings to uppercase
                 .Aggregate((w1, w2) => $"{w1}.{w2}");
         }
     }

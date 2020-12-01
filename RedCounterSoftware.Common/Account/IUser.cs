@@ -10,6 +10,7 @@
 
         string Email { get; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Entity Framework")]
         byte[] Password { get; }
 
         Guid? PasswordResetGuid { get; }

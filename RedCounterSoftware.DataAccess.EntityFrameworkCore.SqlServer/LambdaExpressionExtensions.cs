@@ -13,6 +13,11 @@
         public static Expression<Func<T, bool>> InExpression<T, TK>(
             this Expression<Func<T, TK>> selector, IEnumerable<TK> array)
         {
+            if (selector == null)
+            {
+                throw new ArgumentNullException(nameof(selector));
+            }
+
             var p = selector.GetParameterExpression();
             var contains = typeof(Enumerable).GetMethods(BindingFlags.Static | BindingFlags.Public).Where(c => c.Name == "Contains" && c.GetParameters().Length == 2).First().MakeGenericMethod(typeof(TK));
             var body = Expression.Call(contains, Expression.Constant(array), selector.Body);

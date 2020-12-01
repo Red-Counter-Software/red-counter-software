@@ -5,6 +5,7 @@ using FluentValidation;
 namespace RedCounterSoftware.Validation.FluentValidation
 {
     using System;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace RedCounterSoftware.Validation.FluentValidation
     public abstract class CustomValidator<T> : AbstractValidator<T>, ICustomValidator<T>
         where T : class
     {
-        protected CustomValidator() => this.CascadeMode = CascadeMode.StopOnFirstFailure;
+        protected CustomValidator() => this.CascadeMode = CascadeMode.Stop;
 
         public async Task<Result<T>> PerformValidation(T toValidate, int? index = null)
         {
@@ -23,8 +24,8 @@ namespace RedCounterSoftware.Validation.FluentValidation
                 throw new ArgumentNullException(nameof(toValidate));
             }
 
-            var result = await this.ValidateAsync(toValidate);
-            return new Result<T>(toValidate, result.Errors.Select(c => new Failure(c.PropertyName, c.ErrorMessage, c.AttemptedValue ?? string.Empty)).ToList(), index);
+            var result = await this.ValidateAsync(toValidate).ConfigureAwait(false);
+            return new Result<T>(toValidate, new Collection<Failure>(result.Errors.Select(c => new Failure(c.PropertyName, c.ErrorMessage, c.AttemptedValue ?? string.Empty)).ToList()), index);
         }
 
         public Task<Result<T>> ValidateProperty<TK>(T toValidate, Expression<Func<T, TK>> propertySelector)
@@ -40,8 +41,8 @@ namespace RedCounterSoftware.Validation.FluentValidation
             }
 
             var result = this.Validate(toValidate);
-            return Task.FromResult(new Result<T>(toValidate, result.Errors.Where(e => e.PropertyName.StartsWith(propertySelector.GetPropertyName())).Select(c => new Failure(c.PropertyName, c.ErrorMessage, c.AttemptedValue ?? string.Empty))
-                    .ToList()));
+            return Task.FromResult(new Result<T>(toValidate, new Collection<Failure>(result.Errors.Where(e => e.PropertyName.StartsWith(propertySelector.GetPropertyName())).Select(c => new Failure(c.PropertyName, c.ErrorMessage, c.AttemptedValue ?? string.Empty))
+                    .ToList())));
         }
     }
 }

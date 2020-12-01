@@ -14,7 +14,7 @@
         /// </summary>
         /// <param name="totalCount">The total count of the found elements, regardless of paging.</param>
         /// <param name="items">The returned items.</param>
-        public SearchResult(int totalCount, List<T> items)
+        public SearchResult(int totalCount, ICollection<T> items)
         {
             this.TotalCount = totalCount >= 0 ? totalCount : throw new ArgumentException("Cannot be less than zero", nameof(totalCount));
             this.Items = items ?? throw new ArgumentNullException(nameof(items));
@@ -34,6 +34,6 @@
         /// <value>
         /// The returned items.
         /// </value>
-        public List<T> Items { get; }
+        public ICollection<T> Items { get; }
     }
 }

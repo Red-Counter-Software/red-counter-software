@@ -25,8 +25,18 @@
         }
 
         public SearchParameters(SearchParameters searchParameters)
-            : base(searchParameters.SearchTerm, searchParameters.SortTerm, searchParameters.IsDescending, searchParameters.PageSize, searchParameters.CurrentPage)
+            : base(
+                  searchParameters != null ? searchParameters.SearchTerm : string.Empty,
+                  searchParameters != null ? searchParameters.SortTerm : string.Empty,
+                  searchParameters != null && searchParameters.IsDescending,
+                  searchParameters != null ? searchParameters.PageSize : 10,
+                  searchParameters != null ? searchParameters.CurrentPage : 1)
         {
+            if (searchParameters == null)
+            {
+                throw new ArgumentNullException(nameof(searchParameters));
+            }
+
             this.SortExpression = searchParameters.SortTerm.GetPropertyExpression<T>();
         }
 
