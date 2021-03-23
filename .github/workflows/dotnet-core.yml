@@ -33,6 +33,11 @@ jobs:
       with:
           PROJECT_FILE_PATH: RedCounterSoftware.DataAccess.EntityFrameworkCore.SqlServer/RedCounterSoftware.DataAccess.EntityFrameworkCore.SqlServer.csproj
           NUGET_KEY: ${{secrets.NuGet}}
+    - name: Publish DataAccess.RavenDb
+      uses: brandedoutcast/publish-nuget@v2.5.2
+      with:
+          PROJECT_FILE_PATH: RedCounterSoftware.DataAccess.RavenDb/RedCounterSoftware.DataAccess.RavenDb.csproj
+          NUGET_KEY: ${{secrets.NuGet}}
     - name: Publish Logging.Web
       uses: brandedoutcast/publish-nuget@v2.5.2
       with:
