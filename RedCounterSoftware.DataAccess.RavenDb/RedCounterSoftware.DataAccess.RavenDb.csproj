@@ -13,7 +13,7 @@
     <RepositoryUrl>https://bitbucket.org/red-counter-software/red-counter-software</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <Version>4.1.0</Version>
+    <Version>4.2.0</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
