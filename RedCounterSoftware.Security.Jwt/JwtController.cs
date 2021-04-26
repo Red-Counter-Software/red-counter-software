@@ -16,23 +16,13 @@
     using RedCounterSoftware.Logging.Web;
 
     [AllowAnonymous]
-    public abstract class JwtController : Controller
+    public abstract class JwtController : ReadOnlyJwtController
     {
         private readonly IAuthenticationService authenticationService;
-
-        private readonly IRoleService roleService;
-
-        private readonly IPersonService personService;
 
         private readonly IMailingService mailingService;
 
         private readonly ILogger<JwtController> logger;
-
-        private readonly string jwtKey;
-
-        private readonly string jwtIssuer;
-
-        private readonly string jwtAudience;
 
         private readonly string passwordResetSubject;
 
@@ -52,22 +42,13 @@
             string passwordResetSubject,
             string passwordResetTextBody,
             string passwordResetHtmlBody)
+            : base(authenticationService, roleService, personService, logger, jwtKey, jwtIssuer, jwtAudience)
         {
             this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
-
-            this.roleService = roleService ?? throw new ArgumentNullException(nameof(roleService));
-
-            this.personService = personService ?? throw new ArgumentNullException(nameof(personService));
 
             this.mailingService = mailingService ?? throw new ArgumentNullException(nameof(mailingService));
 
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-            this.jwtKey = jwtKey ?? throw new ArgumentNullException(nameof(jwtKey));
-
-            this.jwtIssuer = jwtIssuer ?? throw new ArgumentNullException(nameof(jwtIssuer));
-
-            this.jwtAudience = jwtAudience ?? throw new ArgumentNullException(nameof(jwtAudience));
 
             this.passwordResetSubject = passwordResetSubject ?? throw new ArgumentNullException(nameof(passwordResetSubject));
 
@@ -98,44 +79,6 @@
                 _ = await this.authenticationService.SetPassword(result.Item.Id, model.Password).ConfigureAwait(false);
                 this.logger.LogInformation(LoggingEvents.ActivationOk, "User {user} with activation code [{code}] created a password and activated succesfully", result.Item.Email, model.Id);
                 return this.Ok();
-            }
-        }
-
-        [HttpPost("createtoken")]
-        public async Task<IActionResult> CreateToken([FromBody] LoginModel loginModel)
-        {
-            if (loginModel == null)
-            {
-                throw new ArgumentNullException(nameof(loginModel));
-            }
-
-            using (this.logger.BeginScope(LoggingEvents.Authentication))
-            using (this.logger.ScopeRemoteIp(this.HttpContext))
-            {
-                this.logger.LogInformation(LoggingEvents.Authentication, "JWT Token requested for user {user}", loginModel.Username);
-
-                var isAuthorized = await this.authenticationService.IsPasswordValid(loginModel.Username, loginModel.Password).ConfigureAwait(false);
-
-                if (!isAuthorized)
-                {
-                    this.logger.LogInformation(LoggingEvents.AuthenticationFail, "Invalid credentials for user {user}", loginModel.Username);
-                    return this.Unauthorized();
-                }
-
-                var user = await this.authenticationService.GetByEmail(loginModel.Username, CancellationToken.None).ConfigureAwait(false);
-
-                var isValidStatus = await this.authenticationService.IsUserActive(user).ConfigureAwait(false);
-
-                if (!isValidStatus)
-                {
-                    this.logger.LogInformation(LoggingEvents.AuthenticationFail, "User {user} is inactive or locked out", loginModel.Username);
-                    return this.Forbid();
-                }
-
-                var token = await this.CreateToken(loginModel, user, true).ConfigureAwait(false);
-                var lightweightToken = await this.CreateToken(loginModel, user, false).ConfigureAwait(false);
-
-                return this.Ok(new JwtModel { ExpiresAt = token.ExpiresAt, Token = token.Token, LightweightToken = lightweightToken.Token });
             }
         }
 
@@ -199,21 +142,6 @@
                 this.logger.LogInformation("Invalid user input: {input}", result.Failures.Select(c => c.ErrorMessage).Aggregate((s1, s2) => s1 + Environment.NewLine + s2));
                 return new StatusCodeResult(422);
             }
-        }
-
-        private async Task<JwtModel> CreateToken(LoginModel loginModel, IUser user, bool includeRoles)
-        {
-            if (loginModel == null)
-            {
-                throw new ArgumentNullException(nameof(loginModel));
-            }
-
-            var roles = includeRoles ? (await this.roleService.GetByUserId(user.Id).ConfigureAwait(false)).SelectMany(c => c.Claims).ToArray() : Array.Empty<string>();
-            var person = await this.personService.GetById(user.PersonId, CancellationToken.None).ConfigureAwait(false);
-            var token = JwtHelper.BuildToken(user, person, this.jwtKey, this.jwtIssuer, this.jwtAudience, roles);
-
-            this.logger.LogInformation(LoggingEvents.AuthenticationOk, "Jwt Token created for user {user}", loginModel.Username);
-            return token;
         }
     }
 }
