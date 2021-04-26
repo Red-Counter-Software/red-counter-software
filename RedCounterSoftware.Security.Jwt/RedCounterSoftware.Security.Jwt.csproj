@@ -10,9 +10,9 @@
     <Company>Red Counter Software</Company>
     <RepositoryType>Git</RepositoryType>
     <RepositoryUrl>https://bitbucket.org/red-counter-software/red-counter-software</RepositoryUrl>
-    <Copyright>Copyright © 2019 Red Counter Software. All rights reserved.</Copyright>
+    <Copyright>Copyright © 2021 Red Counter Software. All rights reserved.</Copyright>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <Version>4.2.0</Version>
+    <Version>4.3.0</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
