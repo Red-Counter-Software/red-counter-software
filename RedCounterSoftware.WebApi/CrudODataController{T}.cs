@@ -5,7 +5,7 @@
     using System.Linq.Expressions;
 
     using System.Threading.Tasks;
-    using Microsoft.AspNet.OData;
+    using Microsoft.AspNetCore.OData.Routing.Controllers;
     using Microsoft.Extensions.Logging;
     using RedCounterSoftware.Common;
     using RedCounterSoftware.Common.Extensions;

@@ -12,7 +12,7 @@
     <RepositoryUrl>https://bitbucket.org/red-counter-software/red-counter-software</RepositoryUrl>
     <Copyright>Copyright © 2021 Red Counter Software. All rights reserved.</Copyright>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <Version>4.4.0</Version>
+    <Version>4.5.0</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -33,7 +33,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.11.1" />
   </ItemGroup>
 
   <ItemGroup>
