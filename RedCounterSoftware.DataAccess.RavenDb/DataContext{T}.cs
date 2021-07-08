@@ -16,7 +16,7 @@
     using RedCounterSoftware.DataAccess.RavenDb.Extensions;
 
     public abstract class DataContext<T> : IDataContext<T>
-    where T : class
+    where T : RecordBase
     {
         private bool disposedValue; // To detect redundant calls
 

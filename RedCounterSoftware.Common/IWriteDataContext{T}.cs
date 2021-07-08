@@ -6,7 +6,7 @@
     using System.Threading.Tasks;
 
     public interface IWriteDataContext<T> : IDisposable
-        where T : class
+        where T : RecordBase
     {
         /// <summary>
         /// Adds an instance of <see cref="T"/> to the underlying storage.

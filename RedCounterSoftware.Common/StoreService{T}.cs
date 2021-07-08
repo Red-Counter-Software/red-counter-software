@@ -10,7 +10,7 @@
     using Common.Validation;
 
     public abstract class StoreService<T> : IStoreService<T>
-        where T : class
+        where T : RecordBase
     {
         protected StoreService(IDataContext<T> context, ICustomValidator<T> validator)
         {

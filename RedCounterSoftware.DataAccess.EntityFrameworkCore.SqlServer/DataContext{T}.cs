@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Linq.Expressions;
     using System.Threading;
     using System.Threading.Tasks;
@@ -12,7 +11,7 @@
     using RedCounterSoftware.Common.Extensions;
 
     public abstract class DataContext<T> : ReadOnlyDataContext<T>, IDataContext<T>
-        where T : class
+        where T : RecordBase
     {
         private readonly DbSet<T> entitySet;
 

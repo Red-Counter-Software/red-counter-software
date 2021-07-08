@@ -12,7 +12,7 @@
     using RedCounterSoftware.Common.Extensions;
 
     public abstract class ReadOnlyDataContext<T> : IReadDataContext<T>
-        where T : class
+        where T : RecordBase
     {
         private readonly DbSet<T> entitySet;
 
