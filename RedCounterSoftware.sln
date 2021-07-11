@@ -22,7 +22,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{5A264499
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.Validation.FluentValidation", "RedCounterSoftware.Validation.FluentValidation\RedCounterSoftware.Validation.FluentValidation.csproj", "{BD96622E-C1DB-4140-9580-6302D65B52B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedCounterSoftware.DataAccess.RavenDb", "RedCounterSoftware.DataAccess.RavenDb\RedCounterSoftware.DataAccess.RavenDb.csproj", "{91590154-296D-42CC-BB30-738757365E1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.DataAccess.RavenDb", "RedCounterSoftware.DataAccess.RavenDb\RedCounterSoftware.DataAccess.RavenDb.csproj", "{91590154-296D-42CC-BB30-738757365E1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedCounterSoftware.DataAccess.Dapper.SqlServer", "RedCounterSoftware.DataAccess.Dapper.SqlServer\RedCounterSoftware.DataAccess.Dapper.SqlServer.csproj", "{1194F884-D301-4C9C-89E9-06C7E162D179}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +64,10 @@ Global
 		{91590154-296D-42CC-BB30-738757365E1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91590154-296D-42CC-BB30-738757365E1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91590154-296D-42CC-BB30-738757365E1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1194F884-D301-4C9C-89E9-06C7E162D179}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1194F884-D301-4C9C-89E9-06C7E162D179}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1194F884-D301-4C9C-89E9-06C7E162D179}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1194F884-D301-4C9C-89E9-06C7E162D179}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
