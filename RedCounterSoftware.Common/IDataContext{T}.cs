@@ -6,7 +6,7 @@
     /// </summary>
     /// <typeparam name="T">The type of the entity handled.</typeparam>
     public interface IDataContext<T> : IReadDataContext<T>, IWriteDataContext<T>
-        where T : class
+        where T : RecordBase
     {
     }
 }
