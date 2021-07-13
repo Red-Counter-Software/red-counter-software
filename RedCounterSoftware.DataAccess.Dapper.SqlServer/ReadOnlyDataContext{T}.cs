@@ -67,10 +67,10 @@
         public virtual async Task<SearchResult<T>> Search(SearchParameters<T> searchParameters, CancellationToken cancellationToken = default)
         {
             var command = this.ComposeSearch(searchParameters);
-            command = await this.SearchFilters(command, searchParameters);
+            command = await this.SearchFilters(command, searchParameters).ConfigureAwait(false);
             var result = await this.SqlConnection.QueryAsync<T>(command.ToString(), new { Value = searchParameters.SearchTerm }).ConfigureAwait(false);
             var items = result.ToArray();
-            return new SearchResult<T>(items.Count(), items);
+            return new SearchResult<T>(items.Length, items);
         }
 
         public void Dispose()
@@ -97,7 +97,11 @@
             }
         }
 
-        protected abstract StringBuilder ComposeSearch(SearchParameters<T> searchParameters);
+        protected virtual StringBuilder ComposeSearch(SearchParameters<T> searchParameters)
+        {
+            var builder = new StringBuilder();
+            return builder.AppendLine($"Select * From [{this.SchemaName}].[{this.TableName}]");
+        }
 
         protected virtual Task<StringBuilder> SearchFilters(StringBuilder command, SearchParameters<T> searchParameters)
         {
