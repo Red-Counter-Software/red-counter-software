@@ -21,11 +21,12 @@
 
         public abstract Task<T[]> AddBulk<TId>(Expression<Func<T, TId>> filter, T[] toAdd, CancellationToken cancellationToken = default);
 
-        public Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default)
+        public async Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default)
         {
             var identifierName = filter.GetPropertyName();
             var command = $"Delete From [{this.SchemaName}].[{this.TableName}] Where [{identifierName}] = @Id";
-            return this.SqlConnection.ExecuteAsync(command, new { Id = id });
+            using var connection = await this.GetSqlConnection(cancellationToken);
+            _ = await connection.ExecuteAsync(command, new { Id = id });
         }
 
         public async Task<T> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
@@ -33,7 +34,8 @@
             var identifierName = filter.GetPropertyName();
             var fieldName = selector.GetPropertyName();
             var command = $"Update [{this.SchemaName}].[{this.TableName}] Set [{fieldName}] = @Value Where [{identifierName}] = @Id";
-            _ = await this.SqlConnection.ExecuteAsync(command, new { Value = value, Id = id }).ConfigureAwait(false);
+            using var connection = await this.GetSqlConnection(cancellationToken);
+            _ = await connection.ExecuteAsync(command, new { Value = value, Id = id }).ConfigureAwait(false);
             var result = await this.GetBy(filter, id).ConfigureAwait(false);
             return result;
         }

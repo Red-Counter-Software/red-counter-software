@@ -75,7 +75,7 @@
         public virtual Task<SearchResult<T>> Search(SearchParameters<T> searchParameters, CancellationToken cancellationToken = default)
         {
             var query = this.ComposeSearch(searchParameters);
-            return Task.FromResult(this.SearchFilters(query, searchParameters));
+            return this.SearchFilters(query, searchParameters, cancellationToken);
         }
 
         public void Dispose()
@@ -104,7 +104,7 @@
 
         protected abstract IQueryable<T> ComposeSearch(SearchParameters<T> searchParameters);
 
-        protected virtual SearchResult<T> SearchFilters(IQueryable<T> queryable, SearchParameters<T> searchParameters)
+        protected virtual async Task<SearchResult<T>> SearchFilters(IQueryable<T> queryable, SearchParameters<T> searchParameters, CancellationToken cancellationToken)
         {
             if (searchParameters == null)
             {
@@ -113,7 +113,9 @@
 
             var ordered = searchParameters.IsDescending ? queryable.OrderByDescending(searchParameters.SortExpression) : queryable.OrderBy(searchParameters.SortExpression);
             var paged = ordered.Skip(searchParameters.PageSize * searchParameters.CurrentPage).Take(searchParameters.PageSize);
-            return new SearchResult<T>(queryable.Count(), paged.ToList());
+            var count = await queryable.CountAsync(cancellationToken);
+            var result = await paged.ToListAsync(cancellationToken);
+            return new SearchResult<T>(count, result);
         }
     }
 }
