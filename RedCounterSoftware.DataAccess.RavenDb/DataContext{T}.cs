@@ -20,7 +20,13 @@
     {
         private bool disposedValue; // To detect redundant calls
 
-        protected DataContext(IAsyncDocumentSession session) => this.Session = session ?? throw new ArgumentNullException(nameof(session));
+        protected DataContext(IDocumentStore store)
+        {
+            this.Store = store ?? throw new ArgumentNullException(nameof(store));
+            this.Session = store.OpenAsyncSession();
+        }
+
+        protected IDocumentStore Store { get; }
 
         protected IAsyncDocumentSession Session { get; }
 
@@ -83,9 +89,20 @@
             return toAdd;
         }
 
-        public Task<T[]> AddBulk<TId>(Expression<Func<T, TId>> filter, T[] toAdd, CancellationToken cancellationToken = default)
+        public async Task<T[]> AddBulk<TId>(Expression<Func<T, TId>> filter, T[] toAdd, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            if (toAdd == null)
+            {
+                throw new ArgumentNullException(nameof(toAdd));
+            }
+
+            using var bulkInsert = this.Store.BulkInsert(token: cancellationToken);
+            foreach (var item in toAdd)
+            {
+                _ = await bulkInsert.StoreAsync(item).ConfigureAwait(false);
+            }
+
+            return toAdd;
         }
 
         public async Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default)
@@ -123,12 +140,12 @@
             }
 
             var query = this.ComposeSearch(searchParameters);
-            return Task.FromResult(this.SearchFilters(query, searchParameters));
+            return this.SearchFilters(query, searchParameters, cancellationToken);
         }
 
         protected abstract IRavenQueryable<T> ComposeSearch(SearchParameters<T> searchParameters);
 
-        protected virtual SearchResult<TSearch> SearchFilters<TSearch>(IRavenQueryable<TSearch> queryable, SearchParameters<TSearch> searchParameters)
+        protected virtual async Task<SearchResult<TSearch>> SearchFilters<TSearch>(IRavenQueryable<TSearch> queryable, SearchParameters<TSearch> searchParameters, CancellationToken cancellationToken)
         {
             if (searchParameters == null)
             {
@@ -137,7 +154,9 @@
 
             var ordered = searchParameters.IsDescending ? queryable.OrderByDescending(searchParameters.SortExpression) : queryable.OrderBy(searchParameters.SortExpression);
             var paged = ordered.Skip(searchParameters.PageSize * searchParameters.CurrentPage).Take(searchParameters.PageSize);
-            return new SearchResult<TSearch>(queryable.Count(), paged.ToList());
+            var count = await queryable.CountAsync(cancellationToken).ConfigureAwait(false);
+            var result = await paged.ToListAsync(cancellationToken).ConfigureAwait(false);
+            return new SearchResult<TSearch>(count, result);
         }
 
         protected IRavenQueryable<TSearch> QueryWithIndex<TSearch, TIndex>(SearchParameters<TSearch> searchParameters, params Expression<Func<TSearch, object>>[] filters)
@@ -155,7 +174,7 @@
             return query;
         }
 
-        protected Task<SearchResult<TSearch>> SearchWithIndex<TSearch, TIndex>(SearchParameters<TSearch> searchParameters, params Expression<Func<TSearch, object>>[] filters)
+        protected Task<SearchResult<TSearch>> SearchWithIndex<TSearch, TIndex>(SearchParameters<TSearch> searchParameters, CancellationToken cancellationToken, params Expression<Func<TSearch, object>>[] filters)
             where TIndex : AbstractIndexCreationTask<T, TSearch>, new()
         {
             if (searchParameters == null)
@@ -165,7 +184,7 @@
 
             var query = this.QueryWithIndex<TSearch, TIndex>(searchParameters, filters);
 
-            return Task.FromResult(this.SearchFilters(query, searchParameters));
+            return this.SearchFilters(query, searchParameters, cancellationToken);
         }
 
         protected virtual void Dispose(bool disposing)

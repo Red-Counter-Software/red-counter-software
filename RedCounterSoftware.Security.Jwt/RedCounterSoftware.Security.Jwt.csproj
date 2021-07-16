@@ -12,7 +12,7 @@
     <RepositoryUrl>https://bitbucket.org/red-counter-software/red-counter-software</RepositoryUrl>
     <Copyright>Copyright © 2021 Red Counter Software. All rights reserved.</Copyright>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <Version>4.7.0</Version>
+    <Version>4.8.0</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

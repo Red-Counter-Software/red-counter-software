@@ -24,42 +24,46 @@
                 throw new ArgumentNullException(nameof(connectionString));
             }
 
-            this.TableName = !string.IsNullOrEmpty(tableName) ? tableName : throw new ArgumentNullException(nameof(tableName));
+            this.ConnectionString = !string.IsNullOrWhiteSpace(connectionString) ? connectionString : throw new ArgumentNullException(nameof(connectionString));
+            this.TableName = !string.IsNullOrWhiteSpace(tableName) ? tableName : throw new ArgumentNullException(nameof(tableName));
             this.SchemaName = schemaName;
-            this.SqlConnection = new SqlConnection(connectionString);
         }
+
+        protected string ConnectionString { get; private set; }
 
         protected string TableName { get; private set; }
 
         protected string SchemaName { get; private set; }
 
-        protected SqlConnection SqlConnection { get; private set; }
-
-        public virtual Task<int> Count(CancellationToken cancellationToken = default)
+        public virtual async Task<int> Count(CancellationToken cancellationToken = default)
         {
             var command = $"Select Count(*) From [{this.SchemaName}].[{this.TableName}]";
-            return this.SqlConnection.ExecuteScalarAsync<int>(command);
+            using var connection = await this.GetSqlConnection(cancellationToken);
+            return await connection.ExecuteScalarAsync<int>(command);
         }
 
-        public virtual Task<bool> ExistsBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> ExistsBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
             var fieldName = selector.GetPropertyName();
             var command = $"Select Count(Distinct 1) From [{this.SchemaName}].[{this.TableName}] Where [{fieldName}] = @Value";
-            return this.SqlConnection.ExecuteScalarAsync<bool>(command, new { Value = value });
+            using var connection = await this.GetSqlConnection(cancellationToken);
+            return await connection.ExecuteScalarAsync<bool>(command, new { Value = value });
         }
 
-        public virtual Task<T> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
+        public virtual async Task<T> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
             var fieldName = selector.GetPropertyName();
             var command = $"Select * From [{this.SchemaName}].[{this.TableName}] Where [{fieldName}] = @Value";
-            return this.SqlConnection.QuerySingleOrDefaultAsync<T>(command, new { Value = value });
+            using var connection = await this.GetSqlConnection(cancellationToken);
+            return await connection.QuerySingleOrDefaultAsync<T>(command, new { Value = value });
         }
 
         public virtual async Task<SearchResult<T>> GetByMultipleValues<TK>(Expression<Func<T, TK>> selector, TK[] values, CancellationToken cancellationToken = default)
         {
             var fieldName = selector.GetPropertyName();
             var command = $"Select * From [{this.SchemaName}].[{this.TableName}] Where [{fieldName}] IN @Values";
-            var result = await this.SqlConnection.QueryAsync<T>(command, new { Values = values }).ConfigureAwait(false);
+            using var connection = await this.GetSqlConnection(cancellationToken);
+            var result = await connection.QueryAsync<T>(command, new { Values = values }).ConfigureAwait(false);
             var items = result.ToArray();
             return new SearchResult<T>(items.Count(), items);
         }
@@ -68,7 +72,8 @@
         {
             var command = this.ComposeSearch(searchParameters);
             command = await this.SearchFilters(command, searchParameters).ConfigureAwait(false);
-            var result = await this.SqlConnection.QueryAsync<T>(command.ToString(), new { Value = searchParameters.SearchTerm }).ConfigureAwait(false);
+            using var connection = await this.GetSqlConnection(cancellationToken);
+            var result = await connection.QueryAsync<T>(command.ToString(), new { Value = searchParameters.SearchTerm }).ConfigureAwait(false);
             var items = result.ToArray();
             return new SearchResult<T>(items.Length, items);
         }
@@ -88,13 +93,19 @@
             {
                 if (disposing)
                 {
-                    this.SqlConnection.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
                 this.disposedValue = true;
             }
+        }
+
+        protected async Task<SqlConnection> GetSqlConnection(CancellationToken cancellationToken)
+        {
+            var sqlConnection = new SqlConnection(this.ConnectionString);
+            await sqlConnection.OpenAsync(cancellationToken);
+            return sqlConnection;
         }
 
         protected virtual StringBuilder ComposeSearch(SearchParameters<T> searchParameters)
