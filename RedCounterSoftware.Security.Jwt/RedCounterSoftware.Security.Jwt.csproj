@@ -9,10 +9,10 @@
     <Authors>Matteo Mosca</Authors>
     <Company>Red Counter Software</Company>
     <RepositoryType>Git</RepositoryType>
-    <RepositoryUrl>https://bitbucket.org/red-counter-software/red-counter-software</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Red-Counter-Software/red-counter-software</RepositoryUrl>
     <Copyright>Copyright © 2021 Red Counter Software. All rights reserved.</Copyright>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <Version>4.8.0</Version>
+    <Version>4.8.1</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
