@@ -7,5 +7,9 @@
         object Id { get; }
 
         DateTimeOffset BirthDate { get; }
+
+        string FirstName { get; }
+
+        string LastName { get; }
     }
 }
