@@ -90,7 +90,9 @@
                 {
                     new Claim(JwtRegisteredClaimNames.Birthdate, person.BirthDate.ToString(CultureInfo.InvariantCulture)),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim(JwtRegisteredClaimNames.UniqueName, userId)
+                    new Claim(JwtRegisteredClaimNames.UniqueName, userId),
+                    new Claim(JwtRegisteredClaimNames.GivenName, person.FirstName),
+                    new Claim(JwtRegisteredClaimNames.FamilyName, person.LastName)
                 };
 
                 claims.AddRange(permissions.Select(permission => new Claim(ClaimTypes.Role, permission)));
