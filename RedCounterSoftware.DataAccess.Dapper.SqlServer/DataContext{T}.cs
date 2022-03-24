@@ -39,5 +39,7 @@
             var result = await this.GetBy(filter, id).ConfigureAwait(false);
             return result;
         }
+
+        public abstract Task<T> Update<TId>(T toUpdate, TId id, CancellationToken cancellationToken = default);
     }
 }
