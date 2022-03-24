@@ -82,5 +82,16 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns the result of the search.</returns>
         Task<SearchResult<T>> Search(SearchParameters<T> searchParameters, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Updates the whole <see cref="toUpdate"/> entity.
+        /// </summary>
+        /// <typeparam name="TId">The type of the Id property.</typeparam>
+        /// <param name="toUpdate">The entity to update.</param>
+        /// <param name="filter">The expression to filter by Id.</param>
+        /// <param name="id">The id of the entity.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Returns a <see cref="Result{T}"/> indicating wether the operation was successful and the updated entity.</returns>
+        Task<Result<T>> Update<TId>(T toUpdate, Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken);
     }
 }

@@ -51,5 +51,15 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns the updated entity.</returns>
         Task<T> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Updates the whole <see cref="toUpdate"/> entity.
+        /// </summary>
+        /// <typeparam name="TId">The type of the Id property.</typeparam>
+        /// <param name="toUpdate">The entity to update.</param>
+        /// <param name="id">The id of the entity.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Returns the updated entity.</returns>
+        Task<T> Update<TId>(T toUpdate, TId id, CancellationToken cancellationToken = default);
     }
 }

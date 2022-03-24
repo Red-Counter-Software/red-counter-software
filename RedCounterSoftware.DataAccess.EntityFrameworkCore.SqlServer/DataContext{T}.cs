@@ -86,5 +86,17 @@
 
             return entity;
         }
+
+        public async Task<T> Update<TId>(T toUpdate, TId id, CancellationToken cancellationToken = default)
+        {
+            if (toUpdate == null)
+            {
+                throw new ArgumentNullException(nameof(toUpdate));
+            }
+
+            _ = this.Context.Update(toUpdate);
+            _ = await this.Context.SaveChangesAsync(cancellationToken);
+            return toUpdate;
+        }
     }
 }

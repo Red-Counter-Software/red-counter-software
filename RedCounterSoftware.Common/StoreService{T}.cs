@@ -120,9 +120,42 @@
             return this.Context.Search(searchParameters, cancellationToken);
         }
 
+        public async Task<Result<T>> Update<TId>(T toUpdate, Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken)
+        {
+            if (toUpdate == null)
+            {
+                throw new ArgumentNullException(nameof(toUpdate));
+            }
+
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            var result = await this.Validator.PerformValidation(toUpdate).ConfigureAwait(false);
+            var exists = await this.Context.ExistsBy(filter, id, cancellationToken).ConfigureAwait(false);
+
+            if (!exists)
+            {
+                result.Failures.Add(new Failure(nameof(id), $"{typeof(T).Name} with this id was not found", id));
+            }
+
+            await this.UpdateItemAdditionalChecks(toUpdate, result, cancellationToken).ConfigureAwait(false);
+
+            if (!result.IsValid)
+            {
+                return result;
+            }
+
+            var updated = await this.Context.Update(toUpdate, id, cancellationToken).ConfigureAwait(false);
+            return new Result<T>(updated, new Collection<Failure>());
+        }
+
         protected abstract Task AddItemAdditionalChecks(T toAdd, Result<T> partialResult, CancellationToken cancellationToken = default);
 
         protected abstract Task<TK> PatchItemAdditionalChecks<TK>(T toPatch, Expression<Func<T, TK>> selector, TK value, Result<T> partialResult, CancellationToken cancellationToken = default);
+
+        protected abstract Task UpdateItemAdditionalChecks(T toUpdate, Result<T> partialResult, CancellationToken cancellationToken = default);
 
         protected virtual void Dispose(bool disposing)
         {

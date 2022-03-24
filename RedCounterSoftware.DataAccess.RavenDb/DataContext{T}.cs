@@ -6,6 +6,9 @@
     using System.Linq.Expressions;
     using System.Threading;
     using System.Threading.Tasks;
+
+    using Omu.ValueInjecter;
+
     using Raven.Client.Documents;
     using Raven.Client.Documents.Indexes;
     using Raven.Client.Documents.Linq;
@@ -141,6 +144,19 @@
 
             var query = this.ComposeSearch(searchParameters);
             return this.SearchFilters(query, searchParameters, cancellationToken);
+        }
+
+        public async Task<T> Update<TId>(T toUpdate, TId id, CancellationToken cancellationToken = default)
+        {
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            var item = await this.Session.LoadAsync<T>(id.ToString(), cancellationToken).ConfigureAwait(false);
+            _ = item.InjectFrom(toUpdate);
+            await this.Session.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return item;
         }
 
         protected abstract IRavenQueryable<T> ComposeSearch(SearchParameters<T> searchParameters);
