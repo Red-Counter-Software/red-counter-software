@@ -120,7 +120,7 @@
             return this.Context.Search(searchParameters, cancellationToken);
         }
 
-        public async Task<Result<T>> Update<TId>(T toUpdate, Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken)
+        public virtual async Task<Result<T>> Update<TId>(T toUpdate, Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken)
         {
             if (toUpdate == null)
             {

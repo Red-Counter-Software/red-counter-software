@@ -146,7 +146,7 @@
             return this.SearchFilters(query, searchParameters, cancellationToken);
         }
 
-        public async Task<T> Update<TId>(T toUpdate, TId id, CancellationToken cancellationToken = default)
+        public virtual async Task<T> Update<TId>(T toUpdate, TId id, CancellationToken cancellationToken = default)
         {
             if (id == null)
             {

@@ -13,7 +13,7 @@
     <RepositoryUrl>https://github.com/Red-Counter-Software/red-counter-software</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <Version>4.10.0</Version>
+    <Version>4.10.1</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
