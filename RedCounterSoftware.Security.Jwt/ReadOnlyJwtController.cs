@@ -11,7 +11,7 @@
     using RedCounterSoftware.Common.Logging;
     using RedCounterSoftware.Logging.Web;
 
-    public class ReadOnlyJwtController : Controller
+    public abstract class ReadOnlyJwtController : Controller
     {
         private readonly string jwtKey;
 
@@ -27,7 +27,7 @@
 
         private readonly IPersonService personService;
 
-        public ReadOnlyJwtController(
+        protected ReadOnlyJwtController(
             IReadAuthenticationService authenticationService,
             IRoleService roleService,
             IPersonService personService,
