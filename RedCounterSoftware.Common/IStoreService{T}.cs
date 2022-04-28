@@ -50,7 +50,7 @@
         /// <param name="value">The value to search for.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns a single instance of <see cref="T"/> if found, null if not found, throws an exception if more than one is found.</returns>
-        Task<T> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default);
+        Task<T?> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Returns a <see cref="SearchResult{T}"/> containing multiple entities that match the array provided values.

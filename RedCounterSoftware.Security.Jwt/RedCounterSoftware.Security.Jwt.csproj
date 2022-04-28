@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+	<TargetFramework>net6.0</TargetFramework>
     <LangVersion>9.0</LangVersion>
     <CodeAnalysisRuleSet>..\ca.ruleset</CodeAnalysisRuleSet>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -10,10 +10,11 @@
     <Company>Red Counter Software</Company>
     <RepositoryType>Git</RepositoryType>
     <RepositoryUrl>https://github.com/Red-Counter-Software/red-counter-software</RepositoryUrl>
-    <Copyright>Copyright © 2021 Red Counter Software. All rights reserved.</Copyright>
+    <Copyright>Copyright © 2022 Red Counter Software. All rights reserved.</Copyright>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <Version>4.10.2</Version>
+    <Version>5.0.0</Version>
     <Nullable>enable</Nullable>
+	<Description>Helpers to facilitate the creation and use of JWT tokens for web applications.</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -29,11 +30,11 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.15.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.17.0" />
   </ItemGroup>
 
   <ItemGroup>
