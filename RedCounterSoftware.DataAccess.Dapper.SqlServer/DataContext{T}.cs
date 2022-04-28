@@ -12,7 +12,7 @@
     public abstract class DataContext<T> : ReadOnlyDataContext<T>, IDataContext<T>
         where T : RecordBase
     {
-        public DataContext(string connectionString, string tableName, string schemaName = "dbo")
+        protected DataContext(string connectionString, string tableName, string schemaName = "dbo")
             : base(connectionString, tableName, schemaName)
         {
         }
@@ -25,8 +25,8 @@
         {
             var identifierName = filter.GetPropertyName();
             var command = $"Delete From [{this.SchemaName}].[{this.TableName}] Where [{identifierName}] = @Id";
-            using var connection = await this.GetSqlConnection(cancellationToken);
-            _ = await connection.ExecuteAsync(command, new { Id = id });
+            using var connection = await this.GetSqlConnection(cancellationToken).ConfigureAwait(false);
+            _ = await connection.ExecuteAsync(command, new { Id = id }).ConfigureAwait(false);
         }
 
         public async Task<T> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
@@ -34,10 +34,10 @@
             var identifierName = filter.GetPropertyName();
             var fieldName = selector.GetPropertyName();
             var command = $"Update [{this.SchemaName}].[{this.TableName}] Set [{fieldName}] = @Value Where [{identifierName}] = @Id";
-            using var connection = await this.GetSqlConnection(cancellationToken);
+            using var connection = await this.GetSqlConnection(cancellationToken).ConfigureAwait(false);
             _ = await connection.ExecuteAsync(command, new { Value = value, Id = id }).ConfigureAwait(false);
-            var result = await this.GetBy(filter, id).ConfigureAwait(false);
-            return result;
+            var result = await this.GetBy(filter, id, cancellationToken).ConfigureAwait(false);
+            return result!;
         }
 
         public abstract Task<T> Update<TId>(T toUpdate, TId id, CancellationToken cancellationToken = default);

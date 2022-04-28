@@ -47,7 +47,7 @@
             return this.Session.Query<T>().AnyAsync(lambda, cancellationToken);
         }
 
-        public Task<T> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
+        public async Task<T?> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
             if (selector == null)
             {
@@ -56,7 +56,7 @@
 
             var exp = selector.Body.CreateKeyComparisonExpression(Expression.Constant(value));
             var lambda = (Expression<Func<T, bool>>)Expression.Lambda(exp, false, selector.GetParameterExpression());
-            return this.Session.Query<T>().SingleOrDefaultAsync(lambda, cancellationToken);
+            return await this.Session.Query<T>().SingleOrDefaultAsync(lambda, cancellationToken).ConfigureAwait(false);
         }
 
         public virtual async Task<SearchResult<T>> GetByMultipleValues<TK>(Expression<Func<T, TK>> selector, TK[] values, CancellationToken cancellationToken = default)

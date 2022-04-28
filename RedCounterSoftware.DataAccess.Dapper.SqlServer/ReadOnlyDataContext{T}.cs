@@ -17,7 +17,7 @@
     {
         private bool disposedValue; // To detect redundant calls
 
-        public ReadOnlyDataContext(string connectionString, string tableName, string schemaName = "dbo")
+        protected ReadOnlyDataContext(string connectionString, string tableName, string schemaName = "dbo")
         {
             if (string.IsNullOrEmpty(connectionString))
             {
@@ -38,41 +38,46 @@
         public virtual async Task<int> Count(CancellationToken cancellationToken = default)
         {
             var command = $"Select Count(*) From [{this.SchemaName}].[{this.TableName}]";
-            using var connection = await this.GetSqlConnection(cancellationToken);
-            return await connection.ExecuteScalarAsync<int>(command);
+            using var connection = await this.GetSqlConnection(cancellationToken).ConfigureAwait(false);
+            return await connection.ExecuteScalarAsync<int>(command).ConfigureAwait(false);
         }
 
         public virtual async Task<bool> ExistsBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
             var fieldName = selector.GetPropertyName();
             var command = $"Select Count(Distinct 1) From [{this.SchemaName}].[{this.TableName}] Where [{fieldName}] = @Value";
-            using var connection = await this.GetSqlConnection(cancellationToken);
-            return await connection.ExecuteScalarAsync<bool>(command, new { Value = value });
+            using var connection = await this.GetSqlConnection(cancellationToken).ConfigureAwait(false);
+            return await connection.ExecuteScalarAsync<bool>(command, new { Value = value }).ConfigureAwait(false);
         }
 
-        public virtual async Task<T> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
+        public virtual async Task<T?> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
             var fieldName = selector.GetPropertyName();
             var command = $"Select * From [{this.SchemaName}].[{this.TableName}] Where [{fieldName}] = @Value";
-            using var connection = await this.GetSqlConnection(cancellationToken);
-            return await connection.QuerySingleOrDefaultAsync<T>(command, new { Value = value });
+            using var connection = await this.GetSqlConnection(cancellationToken).ConfigureAwait(false);
+            return await connection.QuerySingleOrDefaultAsync<T>(command, new { Value = value }).ConfigureAwait(false);
         }
 
         public virtual async Task<SearchResult<T>> GetByMultipleValues<TK>(Expression<Func<T, TK>> selector, TK[] values, CancellationToken cancellationToken = default)
         {
             var fieldName = selector.GetPropertyName();
             var command = $"Select * From [{this.SchemaName}].[{this.TableName}] Where [{fieldName}] IN @Values";
-            using var connection = await this.GetSqlConnection(cancellationToken);
+            using var connection = await this.GetSqlConnection(cancellationToken).ConfigureAwait(false);
             var result = await connection.QueryAsync<T>(command, new { Values = values }).ConfigureAwait(false);
             var items = result.ToArray();
-            return new SearchResult<T>(items.Count(), items);
+            return new SearchResult<T>(items.Length, items);
         }
 
         public virtual async Task<SearchResult<T>> Search(SearchParameters<T> searchParameters, CancellationToken cancellationToken = default)
         {
+            if (searchParameters is null)
+            {
+                throw new ArgumentNullException(nameof(searchParameters));
+            }
+
             var command = this.ComposeSearch(searchParameters);
             command = await this.SearchFilters(command, searchParameters).ConfigureAwait(false);
-            using var connection = await this.GetSqlConnection(cancellationToken);
+            using var connection = await this.GetSqlConnection(cancellationToken).ConfigureAwait(false);
             var result = await connection.QueryAsync<T>(command.ToString(), new { Value = searchParameters.SearchTerm }).ConfigureAwait(false);
             var items = result.ToArray();
             return new SearchResult<T>(items.Length, items);
@@ -104,7 +109,7 @@
         protected async Task<SqlConnection> GetSqlConnection(CancellationToken cancellationToken)
         {
             var sqlConnection = new SqlConnection(this.ConnectionString);
-            await sqlConnection.OpenAsync(cancellationToken);
+            await sqlConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
             return sqlConnection;
         }
 

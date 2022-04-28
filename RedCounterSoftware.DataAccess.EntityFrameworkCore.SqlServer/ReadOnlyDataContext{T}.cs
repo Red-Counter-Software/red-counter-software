@@ -20,11 +20,6 @@
 
         protected ReadOnlyDataContext(DbContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
             this.Context = context ?? throw new ArgumentNullException(nameof(context));
             this.entitySet = this.Context.Set<T>();
         }
@@ -47,7 +42,7 @@
             return this.entitySet.AnyAsync(lambda, cancellationToken);
         }
 
-        public virtual Task<T> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
+        public virtual Task<T?> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
             if (selector == null)
             {
@@ -113,8 +108,8 @@
 
             var ordered = searchParameters.IsDescending ? queryable.OrderByDescending(searchParameters.SortExpression) : queryable.OrderBy(searchParameters.SortExpression);
             var paged = ordered.Skip(searchParameters.PageSize * searchParameters.CurrentPage).Take(searchParameters.PageSize);
-            var count = await queryable.CountAsync(cancellationToken);
-            var result = await paged.ToListAsync(cancellationToken);
+            var count = await queryable.CountAsync(cancellationToken).ConfigureAwait(false);
+            var result = await paged.ToListAsync(cancellationToken).ConfigureAwait(false);
             return new SearchResult<T>(count, result);
         }
     }

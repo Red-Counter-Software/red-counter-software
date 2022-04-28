@@ -55,7 +55,7 @@
             }
         }
 
-        protected virtual Task<T> GetById<TK>(Expression<Func<T, TK>> filter, TK id) => this.StoreService.GetBy(filter, id);
+        protected virtual Task<T?> GetById<TK>(Expression<Func<T, TK>> filter, TK id) => this.StoreService.GetBy(filter, id);
 
         protected virtual Task<Result> Delete<TK>(Expression<Func<T, TK>> filter, TK id) => this.StoreService.Delete(filter, id);
 

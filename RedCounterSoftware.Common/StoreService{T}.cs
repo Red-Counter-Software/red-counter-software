@@ -68,7 +68,7 @@
             return new Result(new Collection<Failure>());
         }
 
-        public virtual Task<T> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default) => this.Context.GetBy(selector, value, cancellationToken);
+        public virtual Task<T?> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default) => this.Context.GetBy(selector, value, cancellationToken);
 
         public virtual Task<SearchResult<T>> GetByMultipleValues<TK>(Expression<Func<T, TK>> selector, TK[] values, CancellationToken cancellationToken = default)
         {

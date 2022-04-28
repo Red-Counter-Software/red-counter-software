@@ -21,7 +21,7 @@
             var toEncrypt = password + salt.ToUpperInvariant();
 
             var data = Encoding.ASCII.GetBytes(toEncrypt);
-            using var sha1 = new SHA256CryptoServiceProvider();
+            using var sha1 = SHA256.Create();
             var sha1Data = sha1.ComputeHash(data);
             return sha1Data;
         }

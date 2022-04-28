@@ -1,20 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+	<TargetFramework>net6.0</TargetFramework>
     <LangVersion>9.0</LangVersion>
     <CodeAnalysisRuleSet>..\ca.ruleset</CodeAnalysisRuleSet>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>Matteo Mosca</Authors>
     <Company>Red Counter Software</Company>
-    <Copyright>Copyright © 2021 Red Counter Software. All rights reserved.</Copyright>
+    <Copyright>Copyright © 2022 Red Counter Software. All rights reserved.</Copyright>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Red-Counter-Software/red-counter-software</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <Version>4.10.2</Version>
+    <Version>5.0.0</Version>
     <Nullable>enable</Nullable>
+	<Description>Data access functionalities using Raven Db.</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -28,8 +29,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="RavenDB.Client" Version="5.3.100" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+    <PackageReference Include="RavenDB.Client" Version="5.3.102" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

@@ -95,7 +95,7 @@
             }
 
             _ = this.Context.Update(toUpdate);
-            _ = await this.Context.SaveChangesAsync(cancellationToken);
+            _ = await this.Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return toUpdate;
         }
     }
