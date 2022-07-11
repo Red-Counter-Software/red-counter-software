@@ -13,7 +13,7 @@
     <RepositoryUrl>https://github.com/Red-Counter-Software/red-counter-software</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <Version>5.0.0</Version>
+    <Version>5.0.1</Version>
     <Nullable>enable</Nullable>
 	<Description>Data access functionalities using Raven Db.</Description>
   </PropertyGroup>
