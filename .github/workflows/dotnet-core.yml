@@ -24,7 +24,7 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
     - name: Publish Common
-      uses: brandedoutcast/publish-nuget@v2.5.5
+      uses: alirezanet/publish-nuget@v3.0.4
       with:
           PROJECT_FILE_PATH: RedCounterSoftware.Common/RedCounterSoftware.Common.csproj
           NUGET_KEY: ${{secrets.NuGet}}
