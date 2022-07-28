@@ -64,9 +64,9 @@
             return new JwtModel { ExpiresAt = token.ValidTo, Token = jsonToken };
         }
 
-        public static RefreshTokenModel BuildRefreshToken(Guid jwtId, int? expirationInMinutes)
+        public static RefreshTokenModel BuildRefreshToken(string associatedJwt, int? expirationInMinutes)
         {
-            return expirationInMinutes != null ? new RefreshTokenModel(jwtId, (int)expirationInMinutes) : new RefreshTokenModel(jwtId);
+            return expirationInMinutes != null ? new RefreshTokenModel(associatedJwt, (int)expirationInMinutes) : new RefreshTokenModel(associatedJwt);
         }
 
         public static Task<bool> AreTokensValid(JwtModel token, RefreshTokenModel refreshToken, TokenValidationParameters validationParameters)
@@ -89,29 +89,16 @@
             var validatedToken = GetPrincipalFromToken(token, validationParameters);
             var expirationDate = Convert.ToDateTime(validatedToken!.Claims.Single(c => c.Type == JwtRegisteredClaimNames.Exp).Value, CultureInfo.InvariantCulture);
 
-            if (expirationDate > DateTime.Now)
-            {
-                throw new InvalidTokenException("The Token is not expired yet");
-            }
-
-            if (DateTime.Now > refreshToken.ExpiryDate)
-            {
-                throw new InvalidTokenException("The RefreshToken for this Token has expired");
-            }
-
-            if (!refreshToken.IsValid)
-            {
-                throw new InvalidTokenException("The RefreshToken for this Token has been invalidated");
-            }
-
-            if (!refreshToken.IsUsed)
-            {
-                throw new InvalidTokenException("The RefreshToken for this Token has already been used");
-            }
-
-            var jti = validatedToken!.Claims.Single(c => c.Type == JwtRegisteredClaimNames.Jti).Value;
-            return refreshToken.JwtId.ToString() != jti
-                ? throw new InvalidTokenException("This RefreshToken does not exist")
+            return expirationDate > DateTime.Now
+                ? throw new InvalidTokenException("The Token is not expired yet")
+                : DateTime.Now > refreshToken.ExpiryDate
+                ? throw new InvalidTokenException("The RefreshToken for this Token has expired")
+                : !refreshToken.IsValid
+                ? throw new InvalidTokenException("The RefreshToken for this Token has been invalidated")
+                : refreshToken.IsUsed
+                ? throw new InvalidTokenException("The RefreshToken for this Token has already been used")
+                : refreshToken.AssociatedJwt != token.Token
+                ? throw new InvalidTokenException("This is not this Token's RefreshToken")
                 : Task.FromResult(true);
         }
 
