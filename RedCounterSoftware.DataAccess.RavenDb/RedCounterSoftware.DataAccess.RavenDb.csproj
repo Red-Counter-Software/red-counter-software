@@ -1,44 +1,44 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	<TargetFramework>net6.0</TargetFramework>
-    <LangVersion>9.0</LangVersion>
-    <CodeAnalysisRuleSet>..\ca.ruleset</CodeAnalysisRuleSet>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Authors>Matteo Mosca</Authors>
-    <Company>Red Counter Software</Company>
-    <Copyright>Copyright © 2022 Red Counter Software. All rights reserved.</Copyright>
-    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/Red-Counter-Software/red-counter-software</RepositoryUrl>
-    <RepositoryType>Git</RepositoryType>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <Version>5.1.0</Version>
-    <Nullable>enable</Nullable>
-	<Description>Data access functionalities using Raven Db.</Description>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<CodeAnalysisRuleSet>..\ca.ruleset</CodeAnalysisRuleSet>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<Authors>Matteo Mosca</Authors>
+		<Company>Red Counter Software</Company>
+		<Copyright>Copyright © 2022 Red Counter Software. All rights reserved.</Copyright>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/Red-Counter-Software/red-counter-software</RepositoryUrl>
+		<RepositoryType>Git</RepositoryType>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<Version>5.1.0</Version>
+		<Nullable>enable</Nullable>
+		<Description>Data access functionalities using Raven Db.</Description>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="RavenDB.Client" Version="5.3.102" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="ValueInjecter" Version="3.2.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="RavenDB.Client" Version="5.3.102" />
+		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="ValueInjecter" Version="3.2.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\RedCounterSoftware.Common\RedCounterSoftware.Common.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\RedCounterSoftware.Common\RedCounterSoftware.Common.csproj" />
+	</ItemGroup>
 
 </Project>

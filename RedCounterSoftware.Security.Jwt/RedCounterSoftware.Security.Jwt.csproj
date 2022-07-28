@@ -1,45 +1,45 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	<TargetFramework>net6.0</TargetFramework>
-    <LangVersion>9.0</LangVersion>
-    <CodeAnalysisRuleSet>..\ca.ruleset</CodeAnalysisRuleSet>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Authors>Matteo Mosca</Authors>
-    <Company>Red Counter Software</Company>
-    <RepositoryType>Git</RepositoryType>
-    <RepositoryUrl>https://github.com/Red-Counter-Software/red-counter-software</RepositoryUrl>
-    <Copyright>Copyright © 2022 Red Counter Software. All rights reserved.</Copyright>
-    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <Version>5.1.0</Version>
-    <Nullable>enable</Nullable>
-	<Description>Helpers to facilitate the creation and use of JWT tokens for web applications.</Description>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<CodeAnalysisRuleSet>..\ca.ruleset</CodeAnalysisRuleSet>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<Authors>Matteo Mosca</Authors>
+		<Company>Red Counter Software</Company>
+		<RepositoryType>Git</RepositoryType>
+		<RepositoryUrl>https://github.com/Red-Counter-Software/red-counter-software</RepositoryUrl>
+		<Copyright>Copyright © 2022 Red Counter Software. All rights reserved.</Copyright>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<Version>5.1.0</Version>
+		<Nullable>enable</Nullable>
+		<Description>Helpers to facilitate the creation and use of JWT tokens for web applications.</Description>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<WarningsAsErrors />
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<WarningsAsErrors />
+		<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.17.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.17.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\RedCounterSoftware.Common\RedCounterSoftware.Common.csproj" />
-    <ProjectReference Include="..\RedCounterSoftware.Logging.Web\RedCounterSoftware.Logging.Web.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\RedCounterSoftware.Common\RedCounterSoftware.Common.csproj" />
+		<ProjectReference Include="..\RedCounterSoftware.Logging.Web\RedCounterSoftware.Logging.Web.csproj" />
+	</ItemGroup>
 
 </Project>
