@@ -116,7 +116,9 @@
         protected virtual StringBuilder ComposeSearch(SearchParameters<T> searchParameters)
         {
             var builder = new StringBuilder();
+#pragma warning disable CA1305 // Specify IFormatProvider
             return builder.AppendLine($"Select * From [{this.SchemaName}].[{this.TableName}]");
+#pragma warning restore CA1305 // Specify IFormatProvider
         }
 
         protected virtual Task<StringBuilder> SearchFilters(StringBuilder command, SearchParameters<T> searchParameters)
@@ -134,10 +136,12 @@
             var offset = searchParameters.CurrentPage * searchParameters.PageSize;
             var sortDirection = searchParameters.IsDescending ? "Desc" : "Asc";
 
+#pragma warning disable CA1305 // Specify IFormatProvider
             command = command
                 .AppendLine($"Order By {searchParameters.SortTerm} {sortDirection}")
                 .AppendLine($"Offset {offset} Rows")
                 .AppendLine($"Fetch Next {searchParameters.PageSize} Rows Only");
+#pragma warning restore CA1305 // Specify IFormatProvider
 
             return Task.FromResult(command);
         }
