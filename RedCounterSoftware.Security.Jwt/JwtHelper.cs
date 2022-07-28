@@ -7,9 +7,10 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Text;
-
+    using System.Threading.Tasks;
     using Microsoft.IdentityModel.Tokens;
     using RedCounterSoftware.Common.Account;
+    using RedCounterSoftware.Security.Jwt.Exceptions;
 
     public static class JwtHelper
     {
@@ -63,6 +64,44 @@
             return new JwtModel { ExpiresAt = token.ValidTo, Token = jsonToken };
         }
 
+        public static RefreshTokenModel BuildRefreshToken(string associatedJwt, int? expirationInMinutes)
+        {
+            return expirationInMinutes != null ? new RefreshTokenModel(associatedJwt, (int)expirationInMinutes) : new RefreshTokenModel(associatedJwt);
+        }
+
+        public static Task<bool> AreTokensValid(JwtModel token, RefreshTokenModel refreshToken, TokenValidationParameters validationParameters)
+        {
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            if (refreshToken == null)
+            {
+                throw new ArgumentNullException(nameof(refreshToken));
+            }
+
+            if (validationParameters == null)
+            {
+                throw new ArgumentNullException(nameof(validationParameters));
+            }
+
+            var validatedToken = GetPrincipalFromToken(token, validationParameters);
+            var expirationDate = Convert.ToDateTime(validatedToken!.Claims.Single(c => c.Type == JwtRegisteredClaimNames.Exp).Value, CultureInfo.InvariantCulture);
+
+            return expirationDate > DateTime.Now
+                ? throw new InvalidTokenException("The Token is not expired yet")
+                : DateTime.Now > refreshToken.ExpiryDate
+                ? throw new InvalidTokenException("The RefreshToken for this Token has expired")
+                : !refreshToken.IsValid
+                ? throw new InvalidTokenException("The RefreshToken for this Token has been invalidated")
+                : refreshToken.IsUsed
+                ? throw new InvalidTokenException("The RefreshToken for this Token has already been used")
+                : refreshToken.AssociatedJwt != token.Token
+                ? throw new InvalidTokenException("This is not this Token's RefreshToken")
+                : Task.FromResult(true);
+        }
+
         private static IEnumerable<Claim> BuildClaims(IUser user, IPerson person, string[] permissions, string impersonatingUser)
         {
             if (user == null)
@@ -106,6 +145,19 @@
             claims.Add(new Claim(OriginalUserClaimType, impersonatingUser));
 
             return claims;
+        }
+
+        private static ClaimsPrincipal GetPrincipalFromToken(JwtModel token, TokenValidationParameters validationParameters)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(token.Token, validationParameters, out var validatedToken);
+            return HasValidSecurityAlgorithm(validatedToken) ? principal : null!;
+        }
+
+        private static bool HasValidSecurityAlgorithm(SecurityToken validatedToken)
+        {
+            return (validatedToken is JwtSecurityToken jwtSecurityToken) &&
+                jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.OrdinalIgnoreCase);
         }
     }
 }
