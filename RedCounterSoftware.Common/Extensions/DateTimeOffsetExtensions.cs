@@ -4,7 +4,7 @@
     {
         public static IEnumerable<DateTimeOffset> GetMonthsByRange(this DateTimeOffset from, DateTimeOffset to)
         {
-            if (to <= from)
+            if (to < from)
             {
                 throw new ArgumentException("from must represent a date older than to.");
             }
