@@ -69,7 +69,7 @@
             return expirationInMinutes != null ? new RefreshTokenModel(associatedJwt, (int)expirationInMinutes) : new RefreshTokenModel(associatedJwt);
         }
 
-        public static Task<bool> AreTokensValid(JwtModel token, RefreshTokenModel refreshToken, TokenValidationParameters validationParameters)
+        public static Task<bool> AreTokensValid(string token, RefreshTokenModel refreshToken, TokenValidationParameters validationParameters)
         {
             if (token == null)
             {
@@ -97,7 +97,7 @@
                 ? throw new InvalidTokenException("The RefreshToken for this Token has been invalidated")
                 : refreshToken.IsUsed
                 ? throw new InvalidTokenException("The RefreshToken for this Token has already been used")
-                : refreshToken.AssociatedJwt != token.Token
+                : refreshToken.AssociatedJwt != token
                 ? throw new InvalidTokenException("This is not this Token's RefreshToken")
                 : Task.FromResult(true);
         }
@@ -147,10 +147,10 @@
             return claims;
         }
 
-        private static ClaimsPrincipal GetPrincipalFromToken(JwtModel token, TokenValidationParameters validationParameters)
+        private static ClaimsPrincipal GetPrincipalFromToken(string token, TokenValidationParameters validationParameters)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var principal = tokenHandler.ValidateToken(token.Token, validationParameters, out var validatedToken);
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
             return HasValidSecurityAlgorithm(validatedToken) ? principal : null!;
         }
 
