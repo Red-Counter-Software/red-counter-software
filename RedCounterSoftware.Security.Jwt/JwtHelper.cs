@@ -90,7 +90,7 @@
             var expirationUnixDate = long.Parse(validatedToken!.Claims.Single(c => c.Type == JwtRegisteredClaimNames.Exp).Value, CultureInfo.InvariantCulture);
             var expirationDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local).AddSeconds(expirationUnixDate);
 
-            return expirationDate > DateTime.Now
+            return expirationDate < DateTime.Now
                 ? throw new InvalidTokenException("The Token is not expired yet")
                 : DateTime.Now > refreshToken.ExpiryDate
                 ? throw new InvalidTokenException("The RefreshToken for this Token has expired")
