@@ -12,7 +12,7 @@
 		<Copyright>Copyright © 2022 Red Counter Software. All rights reserved.</Copyright>
 		<RepositoryUrl>https://github.com/Red-Counter-Software/red-counter-software</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
-		<Version>5.3.2</Version>
+		<Version>5.3.3</Version>
 		<Nullable>enable</Nullable>
 		<Description>Base library with common classes and interfaces.</Description>
 	</PropertyGroup>
