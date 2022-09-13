@@ -87,10 +87,10 @@
             }
 
             var validatedToken = GetPrincipalFromToken(token, validationParameters);
-            var expirationUnixDate = long.Parse(validatedToken!.Claims.Single(c => c.Type == JwtRegisteredClaimNames.Exp).Value, CultureInfo.InvariantCulture);
-            var expirationDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local).AddSeconds(expirationUnixDate);
+            var seconds = long.Parse(validatedToken!.Claims.Single(c => c.Type == JwtRegisteredClaimNames.Exp).Value, CultureInfo.InvariantCulture);
+            var expirationUnixDate = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(seconds);
 
-            return expirationDate < DateTime.Now
+            bool checksResult = expirationUnixDate > DateTime.Now.ToUniversalTime()
                 ? throw new InvalidTokenException("The Token is not expired yet")
                 : DateTime.Now > refreshToken.ExpiryDate
                 ? throw new InvalidTokenException("The RefreshToken for this Token has expired")
@@ -100,7 +100,9 @@
                 ? throw new InvalidTokenException("The RefreshToken for this Token has already been used")
                 : refreshToken.AssociatedJwt != token
                 ? throw new InvalidTokenException("This is not this Token's RefreshToken")
-                : Task.FromResult(true);
+                : true;
+
+            return Task.FromResult(checksResult);
         }
 
         private static IEnumerable<Claim> BuildClaims(IUser user, IPerson person, string[] permissions, string impersonatingUser)
