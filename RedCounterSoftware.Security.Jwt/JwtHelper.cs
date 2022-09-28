@@ -16,7 +16,7 @@
     {
         public const string OriginalUserClaimType = "OriginalUser";
 
-        public static JwtModel BuildToken(IUser user, IPerson person, string securityKey, string issuer, string audience, string[] permissions, int expirationInMinutes = 525600, string impersonatingUser = "")
+        public static JwtModel BuildToken(IUser user, IPerson person, string securityKey, string issuer, string audience, string[] permissions, int expirationInMinutes = 525600, string impersonatingUser = "", Claim[]? initializedPermissions = null)
         {
             if (user == null)
             {
@@ -57,7 +57,7 @@
                 audience,
                 expires: DateTime.Now.AddMinutes(expirationInMinutes),
                 signingCredentials: creds,
-                claims: claims);
+                claims: initializedPermissions ?? claims);
 
             var jsonToken = new JwtSecurityTokenHandler().WriteToken(token);
 
