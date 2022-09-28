@@ -105,7 +105,7 @@
             return Task.FromResult(checksResult);
         }
 
-        private static IEnumerable<Claim> BuildClaims(IUser user, IPerson person, string[] permissions, string impersonatingUser)
+        private static IEnumerable<Claim> BuildClaims(IUser user, IPerson person, string[] permissions, string impersonatingUser, Claim[]? initializedPermissions = null)
         {
             if (user == null)
             {
@@ -117,7 +117,7 @@
             List<Claim> claims;
 
             // Lightweight token
-            if (!permissions.Any())
+            if (!permissions.Any() && initializedPermissions == null)
             {
                 claims = new List<Claim>
                 {
@@ -138,6 +138,12 @@
                 };
 
                 claims.AddRange(permissions.Select(permission => new Claim(ClaimTypes.Role, permission)));
+
+                if (initializedPermissions != null)
+                {
+                    claims.AddRange(initializedPermissions);
+                    claims = claims.DistinctBy(x => new { x.ValueType, x.Value }).ToList();
+                }
             }
 
             if (impersonatingUser == null)
