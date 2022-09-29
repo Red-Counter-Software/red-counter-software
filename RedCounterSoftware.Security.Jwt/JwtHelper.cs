@@ -50,14 +50,14 @@
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var claims = BuildClaims(user, person, permissions, impersonatingUser);
+            var claims = BuildClaims(user, person, permissions, impersonatingUser, initializedPermissions);
 
             var token = new JwtSecurityToken(
                 issuer,
                 audience,
                 expires: DateTime.Now.AddMinutes(expirationInMinutes),
                 signingCredentials: creds,
-                claims: initializedPermissions ?? claims);
+                claims: claims);
 
             var jsonToken = new JwtSecurityTokenHandler().WriteToken(token);
 
