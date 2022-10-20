@@ -158,7 +158,6 @@
         private static ClaimsPrincipal GetPrincipalFromToken(string token, TokenValidationParameters validationParameters)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var test = tokenHandler.Read
             var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
             return HasValidSecurityAlgorithm(validatedToken) ? principal : null!;
         }
