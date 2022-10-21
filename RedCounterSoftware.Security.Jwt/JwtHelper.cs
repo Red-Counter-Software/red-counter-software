@@ -86,11 +86,10 @@
                 throw new ArgumentNullException(nameof(validationParameters));
             }
 
-            var validatedToken = GetPrincipalFromToken(token, validationParameters);
-            var seconds = long.Parse(validatedToken!.Claims.Single(c => c.Type == JwtRegisteredClaimNames.Exp).Value, CultureInfo.InvariantCulture);
-            var expirationUnixDate = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(seconds);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtExpiration = tokenHandler.ReadJwtToken(token)!.ValidTo;
 
-            bool checksResult = expirationUnixDate > DateTime.Now.ToUniversalTime()
+            bool checksResult = jwtExpiration > DateTime.Now.ToUniversalTime()
                 ? throw new InvalidTokenException("The Token is not expired yet")
                 : DateTime.Now > refreshToken.ExpiryDate
                 ? throw new InvalidTokenException("The RefreshToken for this Token has expired")
