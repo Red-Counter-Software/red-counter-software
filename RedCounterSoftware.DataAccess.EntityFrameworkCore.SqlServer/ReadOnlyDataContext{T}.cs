@@ -50,7 +50,7 @@
             }
 
             var lambda = selector.GetFilterExpression(value);
-            return this.entitySet.SingleOrDefaultAsync(lambda, cancellationToken);
+            return this.GetEntitySet().SingleOrDefaultAsync(lambda, cancellationToken);
         }
 
         public virtual async Task<SearchResult<T>> GetByMultipleValues<TK>(Expression<Func<T, TK>> selector, TK[] values, CancellationToken cancellationToken = default)
@@ -62,7 +62,7 @@
 
             var filter = selector.InExpression(values);
 
-            var data = await this.entitySet.Where(filter).ToListAsync(cancellationToken).ConfigureAwait(false);
+            var data = await this.GetEntitySet().Where(filter).ToListAsync(cancellationToken).ConfigureAwait(false);
 
             return new SearchResult<T>(data.Count, data);
         }
@@ -111,6 +111,11 @@
             var count = await queryable.CountAsync(cancellationToken).ConfigureAwait(false);
             var result = await paged.ToListAsync(cancellationToken).ConfigureAwait(false);
             return new SearchResult<T>(count, result);
+        }
+
+        protected virtual IQueryable<T> GetEntitySet()
+        {
+            return this.entitySet;
         }
     }
 }
