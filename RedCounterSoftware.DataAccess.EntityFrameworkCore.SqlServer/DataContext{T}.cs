@@ -71,7 +71,7 @@
             }
 
             var lambda = filter.GetFilterExpression(id);
-            var entity = await this.entitySet.SingleOrDefaultAsync(lambda, cancellationToken).ConfigureAwait(false);
+            var entity = await this.GetEntitySet().SingleOrDefaultAsync(lambda, cancellationToken).ConfigureAwait(false);
 
             if (entity == null)
             {
