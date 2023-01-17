@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
 
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Infrastructure;
     using RedCounterSoftware.Common;
     using RedCounterSoftware.Common.Extensions;
 
@@ -28,9 +29,12 @@
 
         public virtual async Task<T> Add<TId>(Expression<Func<T, TId>> filter, TId id, T toAdd, CancellationToken cancellationToken = default)
         {
-            var result = await this.entitySet.AddAsync(toAdd, cancellationToken).ConfigureAwait(false);
+            _ = await this.entitySet.AddAsync(toAdd, cancellationToken).ConfigureAwait(false);
             _ = await this.Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            return result.Entity;
+
+            var item = await this.GetBy(filter, id, cancellationToken).ConfigureAwait(false);
+
+            return item!;
         }
 
         public async Task<T[]> AddBulk<TId>(Expression<Func<T, TId>> filter, T[] toAdd, CancellationToken cancellationToken = default)
