@@ -18,7 +18,7 @@
 
         public const string RemoteAddressKey = "RemoteAddress";
 
-        public static IDisposable ScopeRemoteIp(this ILogger logger, HttpContext httpContext)
+        public static IDisposable? ScopeRemoteIp(this ILogger logger, HttpContext httpContext)
         {
             if (logger == null)
             {
@@ -35,7 +35,7 @@
             return logger.BeginScope(KeyValuePair.Create(RemoteAddressKey, remoteIp));
         }
 
-        public static IDisposable ScopeImpersonator(this ILogger logger, ClaimsPrincipal claimsPrincipal)
+        public static IDisposable? ScopeImpersonator(this ILogger logger, ClaimsPrincipal claimsPrincipal)
         {
             return logger == null
                 ? throw new ArgumentNullException(nameof(logger))
@@ -46,7 +46,7 @@
                 claimsPrincipal.HasClaim(c => c.Type == OriginalUserKey) ? claimsPrincipal.Claims.Single(c => c.Type == OriginalUserKey).Value : string.Empty));
         }
 
-        public static IDisposable ScopeCurrentUser(this ILogger logger, ClaimsPrincipal claimsPrincipal)
+        public static IDisposable? ScopeCurrentUser(this ILogger logger, ClaimsPrincipal claimsPrincipal)
         {
             return logger == null
                 ? throw new ArgumentNullException(nameof(logger))

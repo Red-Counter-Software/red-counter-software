@@ -8,11 +8,11 @@
 
     public class LoggingScopes : IDisposable
     {
-        private readonly IDisposable remoteIp;
+        private readonly IDisposable? remoteIp;
 
-        private readonly IDisposable impersonator;
+        private readonly IDisposable? impersonator;
 
-        private readonly IDisposable currentUser;
+        private readonly IDisposable? currentUser;
 
         private bool disposedValue;
 
