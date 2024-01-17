@@ -15,7 +15,7 @@ namespace RedCounterSoftware.Validation.FluentValidation
     public abstract class CustomValidator<T> : AbstractValidator<T>, ICustomValidator<T>
         where T : class
     {
-        protected CustomValidator() => this.CascadeMode = CascadeMode.Continue;
+        protected CustomValidator() => this.ClassLevelCascadeMode = CascadeMode.Continue;
 
         public async Task<Result<T>> PerformValidation(T toValidate, int? index = null)
         {
