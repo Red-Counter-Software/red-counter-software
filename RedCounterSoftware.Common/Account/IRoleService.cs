@@ -5,7 +5,7 @@
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Store service to interact with <see cref="T:RedCounterSoftware.Common.Account.IRole" /> dataobjects.
+    /// Store service to interact with <see cref="IRole" /> dataobjects.
     /// </summary>
     public interface IRoleService
     {

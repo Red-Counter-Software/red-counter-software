@@ -7,7 +7,7 @@
     using RedCounterSoftware.Common.Validation;
 
     /// <summary>
-    /// Store service to interact with <see cref="T:RedCounterSoftware.Common.Account.IUser" /> dataobjects.
+    /// Store service to interact with <see cref="IUser" /> dataobjects.
     /// </summary>
     public interface IAuthenticationService : IReadAuthenticationService
     {

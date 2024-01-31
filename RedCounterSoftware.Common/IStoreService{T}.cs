@@ -73,7 +73,7 @@
         /// <param name="value">The new value to set.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns a <see cref="Result{T}"/> indicating wether the operation was successful and the updated entity.</returns>
-        Task<Result<T>> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default);
+        Task<Result<T>> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK?>> selector, TK? value, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Performs a search based on the provided parameters.
@@ -92,6 +92,6 @@
         /// <param name="id">The id of the entity.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns a <see cref="Result{T}"/> indicating wether the operation was successful and the updated entity.</returns>
-        Task<Result<T>> Update<TId>(T toUpdate, Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken);
+        Task<Result<T>> Update<TId>(T toUpdate, Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default);
     }
 }

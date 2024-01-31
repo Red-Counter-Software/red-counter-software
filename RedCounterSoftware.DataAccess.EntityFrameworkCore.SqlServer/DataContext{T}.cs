@@ -7,7 +7,6 @@
     using System.Threading.Tasks;
 
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Infrastructure;
     using RedCounterSoftware.Common;
     using RedCounterSoftware.Common.Extensions;
 
@@ -83,9 +82,9 @@
             }
 
             var propertyName = selector.GetPropertyName();
-#pragma warning disable SA1009 // Closing parenthesis should be spaced correctly
+
             typeof(T).GetProperty(propertyName)!.SetValue(entity, value);
-#pragma warning restore SA1009 // Closing parenthesis should be spaced correctly
+
             _ = await this.Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             return entity;

@@ -8,10 +8,7 @@
     {
         public static string GetPropertyName(this LambdaExpression selector)
         {
-            if (selector == null)
-            {
-                throw new ArgumentNullException(nameof(selector));
-            }
+            ArgumentNullException.ThrowIfNull(selector);
 
             MemberExpression me;
 
@@ -30,10 +27,7 @@
 
         public static Type GetPropertyType(this LambdaExpression selector)
         {
-            if (selector == null)
-            {
-                throw new ArgumentNullException(nameof(selector));
-            }
+            ArgumentNullException.ThrowIfNull(selector);
 
             MemberExpression me;
 
@@ -52,15 +46,8 @@
 
         public static BinaryExpression CreateKeyComparisonExpression(this Expression leftExpression, Expression rightExpression)
         {
-            if (leftExpression == null)
-            {
-                throw new ArgumentNullException(nameof(leftExpression));
-            }
-
-            if (rightExpression == null)
-            {
-                throw new ArgumentNullException(nameof(rightExpression));
-            }
+            ArgumentNullException.ThrowIfNull(leftExpression);
+            ArgumentNullException.ThrowIfNull(rightExpression);
 
             if (leftExpression.Type == rightExpression.Type)
             {
@@ -81,10 +68,7 @@
 
         public static ParameterExpression GetParameterExpression(this LambdaExpression expression)
         {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+            ArgumentNullException.ThrowIfNull(expression);
 
             var memberExp = expression.Body;
             while (true)
@@ -125,10 +109,7 @@
 
         public static Expression<Func<T, bool>> GetFilterExpression<T, TK>(this Expression<Func<T, TK>> selector, TK value)
         {
-            if (selector == null)
-            {
-                throw new ArgumentNullException(nameof(selector));
-            }
+            ArgumentNullException.ThrowIfNull(selector);
 
             var exp = selector.Body.CreateKeyComparisonExpression(Expression.Constant(value));
             var lambda = (Expression<Func<T, bool>>)Expression.Lambda(exp, false, selector.GetParameterExpression());

@@ -46,6 +46,6 @@
         /// <value>
         /// The lambda expression indicating the property to sort by.
         /// </value>
-        public Expression<Func<T, object>> SortExpression { get; }
+        public Expression<Func<T, object?>> SortExpression { get; }
     }
 }
