@@ -18,15 +18,8 @@
 
         public static JwtModel BuildToken(IUser user, IPerson person, string securityKey, string issuer, string audience, string[] permissions, int expirationInMinutes = 525600, string impersonatingUser = "", Claim[]? initializedPermissions = null)
         {
-            if (user == null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
-
-            if (person == null)
-            {
-                throw new ArgumentNullException(nameof(person));
-            }
+            ArgumentNullException.ThrowIfNull(user);
+            ArgumentNullException.ThrowIfNull(person);
 
             if (string.IsNullOrEmpty(securityKey))
             {
@@ -43,10 +36,7 @@
                 throw new ArgumentException("Cannot be empty", nameof(audience));
             }
 
-            if (permissions == null)
-            {
-                permissions = Array.Empty<string>();
-            }
+            permissions ??= [];
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -71,20 +61,9 @@
 
         public static Task<bool> AreTokensValid(string token, RefreshTokenModel refreshToken, TokenValidationParameters validationParameters)
         {
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
-
-            if (refreshToken == null)
-            {
-                throw new ArgumentNullException(nameof(refreshToken));
-            }
-
-            if (validationParameters == null)
-            {
-                throw new ArgumentNullException(nameof(validationParameters));
-            }
+            ArgumentNullException.ThrowIfNull(token);
+            ArgumentNullException.ThrowIfNull(refreshToken);
+            ArgumentNullException.ThrowIfNull(validationParameters);
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtExpiration = tokenHandler.ReadJwtToken(token)!.ValidTo;
@@ -106,37 +85,33 @@
 
         private static IEnumerable<Claim> BuildClaims(IUser user, IPerson person, string[] permissions, string impersonatingUser, Claim[]? initializedPermissions = null)
         {
-            if (user == null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
+            ArgumentNullException.ThrowIfNull(user);
 
             var userId = user.Id.ToString() ?? string.Empty;
 
             List<Claim> claims;
 
             // Lightweight token
-            if (!permissions.Any() && initializedPermissions == null)
+            if (permissions.Length == 0 && initializedPermissions == null)
             {
-                claims = new List<Claim>
-                {
+                claims =
+                [
                     new Claim(JwtRegisteredClaimNames.UniqueName, userId)
-                };
+                ];
             }
 
             // Normal token
             else
             {
-                claims = new List<Claim>
-                {
+                claims =
+                [
                     new Claim(JwtRegisteredClaimNames.Birthdate, person.BirthDate.ToString(CultureInfo.InvariantCulture)),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.UniqueName, userId),
                     new Claim(JwtRegisteredClaimNames.GivenName, person.FirstName),
-                    new Claim(JwtRegisteredClaimNames.FamilyName, person.LastName)
-                };
-
-                claims.AddRange(permissions.Select(permission => new Claim(ClaimTypes.Role, permission)));
+                    new Claim(JwtRegisteredClaimNames.FamilyName, person.LastName),
+                    .. permissions.Select(permission => new Claim(ClaimTypes.Role, permission)),
+                ];
 
                 if (initializedPermissions != null)
                 {
@@ -153,19 +128,6 @@
             claims.Add(new Claim(OriginalUserClaimType, impersonatingUser));
 
             return claims;
-        }
-
-        private static ClaimsPrincipal GetPrincipalFromToken(string token, TokenValidationParameters validationParameters)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
-            return HasValidSecurityAlgorithm(validatedToken) ? principal : null!;
-        }
-
-        private static bool HasValidSecurityAlgorithm(SecurityToken validatedToken)
-        {
-            return (validatedToken is JwtSecurityToken jwtSecurityToken) &&
-                jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

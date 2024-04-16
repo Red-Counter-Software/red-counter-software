@@ -13,25 +13,16 @@
     using RedCounterSoftware.Common.Validation;
     using RedCounterSoftware.Logging.Web;
 
-    public abstract class CrudODataController<T> : ODataController
+    public abstract class CrudODataController<T>(IStoreService<T> storeService, ILogger logger) : ODataController
         where T : class
     {
-        private readonly ILogger logger;
+        private readonly ILogger logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-        protected CrudODataController(IStoreService<T> storeService, ILogger logger)
-        {
-            this.StoreService = storeService ?? throw new ArgumentNullException(nameof(storeService));
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-
-        protected IStoreService<T> StoreService { get; }
+        protected IStoreService<T> StoreService { get; } = storeService ?? throw new ArgumentNullException(nameof(storeService));
 
         protected async Task<Result<T>> Add<TK>(Expression<Func<T, TK>> filter, TK id, T item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+            ArgumentNullException.ThrowIfNull(item);
 
             using (this.logger.BeginScope(LoggingEvents.Crud))
             using (this.logger.GetCommonScopes(this.HttpContext, this.HttpContext.User))
@@ -60,27 +51,15 @@
 
         protected virtual async Task<Result<T>> Patch<TK>(Expression<Func<T, TK>> filter, TK id, string propertyName, object value)
         {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
+            ArgumentNullException.ThrowIfNull(id);
+            ArgumentNullException.ThrowIfNull(value);
 
             if (string.IsNullOrEmpty(propertyName))
             {
                 throw new ArgumentException("Cannot be empty", nameof(propertyName));
             }
 
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-
-            var exp = propertyName.GetPropertyExpression<T>();
-            if (exp == null)
-            {
-                throw new InvalidOperationException($"Failed to retrieve the property expression from property {propertyName}");
-            }
-
+            var exp = propertyName.GetPropertyExpression<T>() ?? throw new InvalidOperationException($"Failed to retrieve the property expression from property {propertyName}");
             var type = Nullable.GetUnderlyingType(exp.GetPropertyType()) ?? exp.GetPropertyType();
             var changedValue = type.IsEnum
                 ? Enum.Parse(type, value.ToString() ?? throw new InvalidOperationException($"Failed to convert to string value {value}"))

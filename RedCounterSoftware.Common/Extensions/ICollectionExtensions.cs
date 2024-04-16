@@ -2,23 +2,18 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     public static class ICollectionExtensions
     {
         public static void AddRange<T>(this ICollection<T> source, IEnumerable<T> toAdd)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(toAdd);
 
-            if (toAdd == null)
+            foreach (var item in toAdd)
             {
-                throw new ArgumentNullException(nameof(toAdd));
+                source.Add(item);
             }
-
-            toAdd.ToList().ForEach(c => source.Add(c));
         }
     }
 }

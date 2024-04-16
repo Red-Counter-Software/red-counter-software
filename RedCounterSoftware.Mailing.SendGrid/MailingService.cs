@@ -33,15 +33,8 @@ namespace RedCounterSoftware.Mailing.SendGrid
 
         public async Task SendActivationEmail(string email, Guid activationGuid, string subject, string textBody, string htmlBody, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(email))
-            {
-                throw new ArgumentNullException(nameof(email));
-            }
-
-            if (activationGuid == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(activationGuid));
-            }
+            ArgumentNullException.ThrowIfNull(email);
+            ArgumentNullException.ThrowIfNull(activationGuid);
 
             var client = new SendGridClient(this.sendGridApiKey);
             var from = new EmailAddress("noreply@steelchihuahua.com", "NoReply");
@@ -62,15 +55,8 @@ namespace RedCounterSoftware.Mailing.SendGrid
 
         public async Task SendPasswordRecoveryMail(string email, Guid passwordResetGuid, string subject, string textBody, string htmlBody, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(email))
-            {
-                throw new ArgumentNullException(nameof(email));
-            }
-
-            if (passwordResetGuid == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(passwordResetGuid));
-            }
+            ArgumentNullException.ThrowIfNull(email);
+            ArgumentNullException.ThrowIfNull(passwordResetGuid);
 
             var client = new SendGridClient(this.sendGridApiKey);
             var from = new EmailAddress("noreply@steelchihuahua.com", "NoReply");

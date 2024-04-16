@@ -6,6 +6,8 @@
 
     public static class StringExtensions
     {
+        private static readonly char[] Separator = ['.'];
+
         public static Expression<Func<TModel, object?>> GetPropertyExpression<TModel>(this string propertyName)
         {
             var parameter = Expression.Parameter(typeof(TModel), "model");
@@ -26,7 +28,7 @@
 #pragma warning restore CA1308 // Normalize strings to uppercase
             }
 
-            var words = s.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+            var words = s.Split(Separator, StringSplitOptions.RemoveEmptyEntries);
             return words
 #pragma warning disable CA1308 // Normalize strings to uppercase
                 .Select(w => $"{w[..1].ToLowerInvariant()}{w[1..]}")

@@ -21,6 +21,8 @@
         public SearchParameters(string searchTerm, string sortTerm, bool isDescending = false, int pageSize = 10, int currentPage = 0)
             : base(searchTerm, sortTerm, isDescending, pageSize, currentPage)
         {
+            ArgumentNullException.ThrowIfNull(sortTerm);
+
             this.SortExpression = sortTerm.GetPropertyExpression<T>();
         }
 
@@ -32,10 +34,7 @@
                   searchParameters != null ? searchParameters.PageSize : 10,
                   searchParameters != null ? searchParameters.CurrentPage : 1)
         {
-            if (searchParameters == null)
-            {
-                throw new ArgumentNullException(nameof(searchParameters));
-            }
+            ArgumentNullException.ThrowIfNull(searchParameters);
 
             this.SortExpression = searchParameters.SortTerm.GetPropertyExpression<T>();
         }

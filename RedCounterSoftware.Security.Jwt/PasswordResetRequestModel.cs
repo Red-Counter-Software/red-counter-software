@@ -2,11 +2,6 @@
 {
     public class PasswordResetRequestModel
     {
-        public PasswordResetRequestModel()
-        {
-            this.Email = string.Empty;
-        }
-
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
     }
 }

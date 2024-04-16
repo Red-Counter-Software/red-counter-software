@@ -18,15 +18,8 @@
 
         public LoggingScopes(ILogger logger, HttpContext httpContext, ClaimsPrincipal claimsPrincipal)
         {
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException(nameof(httpContext));
-            }
-
-            if (claimsPrincipal == null)
-            {
-                throw new ArgumentNullException(nameof(claimsPrincipal));
-            }
+            ArgumentNullException.ThrowIfNull(httpContext);
+            ArgumentNullException.ThrowIfNull(claimsPrincipal);
 
             this.remoteIp = logger.ScopeRemoteIp(httpContext);
             this.impersonator = logger.ScopeImpersonator(claimsPrincipal);

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Data.SqlClient;
+    using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Text;
@@ -12,23 +13,16 @@
     using RedCounterSoftware.Common;
     using RedCounterSoftware.Common.Extensions;
 
-    public abstract class ReadOnlyDataContext<T> : IReadDataContext<T>
-        where T : RecordBase
+    public abstract class ReadOnlyDataContext<T>(string connectionString, string tableName, string schemaName = "dbo") : IReadDataContext<T>
+        where T : class
     {
         private bool disposedValue; // To detect redundant calls
 
-        protected ReadOnlyDataContext(string connectionString, string tableName, string schemaName = "dbo")
-        {
-            this.ConnectionString = !string.IsNullOrWhiteSpace(connectionString) ? connectionString : throw new ArgumentNullException(nameof(connectionString));
-            this.TableName = !string.IsNullOrWhiteSpace(tableName) ? tableName : throw new ArgumentNullException(nameof(tableName));
-            this.SchemaName = schemaName;
-        }
+        protected string ConnectionString { get; private set; } = !string.IsNullOrWhiteSpace(connectionString) ? connectionString : throw new ArgumentNullException(nameof(connectionString));
 
-        protected string ConnectionString { get; private set; }
+        protected string TableName { get; private set; } = !string.IsNullOrWhiteSpace(tableName) ? tableName : throw new ArgumentNullException(nameof(tableName));
 
-        protected string TableName { get; private set; }
-
-        protected string SchemaName { get; private set; }
+        protected string SchemaName { get; private set; } = schemaName;
 
         public virtual async Task<int> Count(CancellationToken cancellationToken = default)
         {
@@ -115,9 +109,8 @@
         protected virtual StringBuilder ComposeSearch(SearchParameters<T> searchParameters)
         {
             var builder = new StringBuilder();
-#pragma warning disable CA1305 // Specify IFormatProvider
-            return builder.AppendLine($"Select * From [{this.SchemaName}].[{this.TableName}]");
-#pragma warning restore CA1305 // Specify IFormatProvider
+
+            return builder.AppendLine(CultureInfo.InvariantCulture, $"Select * From [{this.SchemaName}].[{this.TableName}]");
         }
 
         protected virtual Task<StringBuilder> SearchFilters(StringBuilder command, SearchParameters<T> searchParameters)
@@ -128,12 +121,10 @@
             var offset = searchParameters.CurrentPage * searchParameters.PageSize;
             var sortDirection = searchParameters.IsDescending ? "Desc" : "Asc";
 
-#pragma warning disable CA1305 // Specify IFormatProvider
             command = command
-                .AppendLine($"Order By {searchParameters.SortTerm} {sortDirection}")
-                .AppendLine($"Offset {offset} Rows")
-                .AppendLine($"Fetch Next {searchParameters.PageSize} Rows Only");
-#pragma warning restore CA1305 // Specify IFormatProvider
+                .AppendLine(CultureInfo.InvariantCulture, $"Order By {searchParameters.SortTerm} {sortDirection}")
+                .AppendLine(CultureInfo.InvariantCulture, $"Offset {offset} Rows")
+                .AppendLine(CultureInfo.InvariantCulture, $"Fetch Next {searchParameters.PageSize} Rows Only");
 
             return Task.FromResult(command);
         }

@@ -9,7 +9,7 @@
     using Common.Validation;
 
     public abstract class StoreService<T> : IStoreService<T>
-        where T : RecordBase
+        where T : class
     {
         protected StoreService(IDataContext<T> context, ICustomValidator<T> validator)
         {
@@ -74,12 +74,7 @@
         {
             ArgumentNullException.ThrowIfNull(selector);
 
-            var current = await this.Context.GetBy(filter, id, cancellationToken).ConfigureAwait(false);
-
-            if (current == null)
-            {
-                throw new InvalidOperationException($"{typeof(T)} with id {id} was not found");
-            }
+            var current = await this.Context.GetBy(filter, id, cancellationToken).ConfigureAwait(false) ?? throw new InvalidOperationException($"{typeof(T)} with id {id} was not found");
 
             // Initialize empty result with unpatched item
             var result = new Result<T>(current, []);
@@ -112,15 +107,8 @@
 
         public virtual async Task<Result<T>> Update<TId>(T toUpdate, Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken)
         {
-            if (toUpdate == null)
-            {
-                throw new ArgumentNullException(nameof(toUpdate));
-            }
-
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
+            ArgumentNullException.ThrowIfNull(toUpdate);
+            ArgumentNullException.ThrowIfNull(id);
 
             var result = await this.Validator.PerformValidation(toUpdate).ConfigureAwait(false);
             var exists = await this.Context.ExistsBy(filter, id, cancellationToken).ConfigureAwait(false);

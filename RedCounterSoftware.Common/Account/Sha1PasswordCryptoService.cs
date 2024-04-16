@@ -4,7 +4,7 @@
     using System.Security.Cryptography;
     using System.Text;
 
-    public class Sha1PasswordCryptoService : IPasswordCryptoService
+    public class Sha256PasswordCryptoService : IPasswordCryptoService
     {
         public byte[] EncryptPassword(string password, string salt = "")
         {
@@ -14,9 +14,8 @@
             var toEncrypt = password + salt.ToUpperInvariant();
 
             var data = Encoding.ASCII.GetBytes(toEncrypt);
-            using var sha1 = SHA256.Create();
-            var sha1Data = sha1.ComputeHash(data);
-            return sha1Data;
+            var sha256Data = SHA256.HashData(data);
+            return sha256Data;
         }
     }
 }

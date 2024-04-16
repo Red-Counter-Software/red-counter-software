@@ -11,53 +11,33 @@
     using RedCounterSoftware.Common.Logging;
     using RedCounterSoftware.Logging.Web;
 
-    public abstract class ReadOnlyJwtController : Controller
+    public abstract class ReadOnlyJwtController(
+        IReadAuthenticationService authenticationService,
+        IRoleService roleService,
+        IPersonService personService,
+        ILogger<JwtController> logger,
+        string jwtKey,
+        string jwtIssuer,
+        string jwtAudience) : Controller
     {
-        private readonly string jwtKey;
+        private readonly string jwtKey = jwtKey ?? throw new ArgumentNullException(nameof(jwtKey));
 
-        private readonly string jwtIssuer;
+        private readonly string jwtIssuer = jwtIssuer ?? throw new ArgumentNullException(nameof(jwtIssuer));
 
-        private readonly string jwtAudience;
+        private readonly string jwtAudience = jwtAudience ?? throw new ArgumentNullException(nameof(jwtAudience));
 
-        private readonly IReadAuthenticationService authenticationService;
+        private readonly IReadAuthenticationService authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
 
-        private readonly ILogger<JwtController> logger;
+        private readonly ILogger<JwtController> logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-        private readonly IRoleService roleService;
+        private readonly IRoleService roleService = roleService ?? throw new ArgumentNullException(nameof(roleService));
 
-        private readonly IPersonService personService;
-
-        protected ReadOnlyJwtController(
-            IReadAuthenticationService authenticationService,
-            IRoleService roleService,
-            IPersonService personService,
-            ILogger<JwtController> logger,
-            string jwtKey,
-            string jwtIssuer,
-            string jwtAudience)
-        {
-            this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
-
-            this.roleService = roleService ?? throw new ArgumentNullException(nameof(roleService));
-
-            this.personService = personService ?? throw new ArgumentNullException(nameof(personService));
-
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-            this.jwtKey = jwtKey ?? throw new ArgumentNullException(nameof(jwtKey));
-
-            this.jwtIssuer = jwtIssuer ?? throw new ArgumentNullException(nameof(jwtIssuer));
-
-            this.jwtAudience = jwtAudience ?? throw new ArgumentNullException(nameof(jwtAudience));
-        }
+        private readonly IPersonService personService = personService ?? throw new ArgumentNullException(nameof(personService));
 
         [HttpPost("createtoken")]
         public async Task<IActionResult> CreateToken([FromBody] LoginModel loginModel)
         {
-            if (loginModel == null)
-            {
-                throw new ArgumentNullException(nameof(loginModel));
-            }
+            ArgumentNullException.ThrowIfNull(loginModel);
 
             using (this.logger.BeginScope(LoggingEvents.Authentication))
             using (this.logger.ScopeRemoteIp(this.HttpContext))
@@ -91,10 +71,7 @@
 
         private async Task<JwtModel> CreateToken(LoginModel loginModel, IUser user, bool includeRoles)
         {
-            if (loginModel == null)
-            {
-                throw new ArgumentNullException(nameof(loginModel));
-            }
+            ArgumentNullException.ThrowIfNull(loginModel);
 
             var roles = includeRoles ? (await this.roleService.GetByUserId(user.Id).ConfigureAwait(false)).SelectMany(c => c.Claims).ToArray() : Array.Empty<string>();
             var person = await this.personService.GetById(user.PersonId, CancellationToken.None).ConfigureAwait(false);

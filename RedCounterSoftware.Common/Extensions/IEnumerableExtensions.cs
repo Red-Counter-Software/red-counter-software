@@ -7,15 +7,8 @@
     {
         public static IEnumerable<TResult> SelectWithPrevious<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TSource, TResult> projection)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (projection == null)
-            {
-                throw new ArgumentNullException(nameof(projection));
-            }
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(projection);
 
             using var iterator = source.GetEnumerator();
 

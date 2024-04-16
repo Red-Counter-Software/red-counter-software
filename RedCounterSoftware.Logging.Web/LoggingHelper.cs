@@ -20,15 +20,8 @@
 
         public static IDisposable? ScopeRemoteIp(this ILogger logger, HttpContext httpContext)
         {
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException(nameof(httpContext));
-            }
+            ArgumentNullException.ThrowIfNull(logger);
+            ArgumentNullException.ThrowIfNull(httpContext);
 
             var remoteIp = httpContext.Connection?.RemoteIpAddress?.ToString();
             remoteIp = remoteIp == "::1" ? "127.0.0.1" : remoteIp;

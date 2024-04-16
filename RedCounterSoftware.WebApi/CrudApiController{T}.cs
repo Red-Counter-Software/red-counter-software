@@ -14,18 +14,12 @@
     using RedCounterSoftware.Logging.Web;
 
     [ApiController]
-    public abstract class CrudApiController<T> : ControllerBase
+    public abstract class CrudApiController<T>(IStoreService<T> storeService, ILogger logger) : ControllerBase
         where T : class
     {
-        private readonly ILogger logger;
+        private readonly ILogger logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-        protected CrudApiController(IStoreService<T> storeService, ILogger logger)
-        {
-            this.StoreService = storeService ?? throw new ArgumentNullException(nameof(storeService));
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-
-        protected IStoreService<T> StoreService { get; }
+        protected IStoreService<T> StoreService { get; } = storeService ?? throw new ArgumentNullException(nameof(storeService));
 
         protected async Task<Result<T>> Add<TK>(Expression<Func<T, TK>> filter, TK id, T item)
         {
@@ -73,12 +67,7 @@
             ArgumentNullException.ThrowIfNull(id);
             ArgumentNullException.ThrowIfNull(propertyName);
 
-            var exp = propertyName.GetPropertyExpression<T>();
-            if (exp == null)
-            {
-                throw new InvalidOperationException($"Failed to retrieve the property expression from property {propertyName}");
-            }
-
+            var exp = propertyName.GetPropertyExpression<T>() ?? throw new InvalidOperationException($"Failed to retrieve the property expression from property {propertyName}");
             var type = Nullable.GetUnderlyingType(exp.GetPropertyType()) ?? exp.GetPropertyType();
             var stringValue = value?.ToString();
             var changedValue = value is null ? null :

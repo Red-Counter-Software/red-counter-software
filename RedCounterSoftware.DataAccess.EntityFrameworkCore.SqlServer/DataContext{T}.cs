@@ -11,17 +11,14 @@
     using RedCounterSoftware.Common.Extensions;
 
     public abstract class DataContext<T> : ReadOnlyDataContext<T>, IDataContext<T>
-        where T : RecordBase
+        where T : class
     {
         private readonly DbSet<T> entitySet;
 
         protected DataContext(DbContext context)
             : base(context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
 
             this.entitySet = context.Set<T>();
         }
@@ -38,10 +35,7 @@
 
         public async Task<T[]> AddBulk<TId>(Expression<Func<T, TId>> filter, T[] toAdd, CancellationToken cancellationToken = default)
         {
-            if (toAdd == null)
-            {
-                throw new ArgumentNullException(nameof(toAdd));
-            }
+            ArgumentNullException.ThrowIfNull(toAdd);
 
             var results = new List<T>();
             foreach (var item in toAdd)
@@ -52,7 +46,7 @@
 
             _ = await this.Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-            return results.ToArray();
+            return [.. results];
         }
 
         public virtual async Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default)
@@ -68,19 +62,12 @@
 
         public virtual async Task<T> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
+            ArgumentNullException.ThrowIfNull(id);
+            ArgumentNullException.ThrowIfNull(selector);
+            ArgumentNullException.ThrowIfNull(filter);
 
             var lambda = filter.GetFilterExpression(id);
-            var entity = await this.GetEntitySet().SingleOrDefaultAsync(lambda, cancellationToken).ConfigureAwait(false);
-
-            if (entity == null)
-            {
-                throw new InvalidOperationException($"Entity with id {id} was not found.");
-            }
-
+            var entity = await this.GetEntitySet().SingleOrDefaultAsync(lambda, cancellationToken).ConfigureAwait(false) ?? throw new InvalidOperationException($"Entity with id {id} was not found.");
             var propertyName = selector.GetPropertyName();
 
             typeof(T).GetProperty(propertyName)!.SetValue(entity, value);
@@ -92,10 +79,7 @@
 
         public virtual async Task<T> Update<TId>(T toUpdate, TId id, CancellationToken cancellationToken = default)
         {
-            if (toUpdate == null)
-            {
-                throw new ArgumentNullException(nameof(toUpdate));
-            }
+            ArgumentNullException.ThrowIfNull(toUpdate);
 
             _ = this.Context.Update(toUpdate);
             _ = await this.Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

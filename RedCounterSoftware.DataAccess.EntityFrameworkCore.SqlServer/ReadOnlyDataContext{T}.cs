@@ -1,7 +1,6 @@
 ﻿namespace RedCounterSoftware.DataAccess.EntityFrameworkCore.SqlServer
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading;
@@ -12,7 +11,7 @@
     using RedCounterSoftware.Common.Extensions;
 
     public abstract class ReadOnlyDataContext<T> : IReadDataContext<T>
-        where T : RecordBase
+        where T : class
     {
         private readonly DbSet<T> entitySet;
 
@@ -53,7 +52,7 @@
 
             if (values == null || values.Length == 0)
             {
-                return new SearchResult<T>(0, new List<T>());
+                return new SearchResult<T>(0, []);
             }
 
             var filter = selector.InExpression(values);
@@ -99,10 +98,8 @@
 
         protected virtual async Task<SearchResult<T>> SearchFilters(IQueryable<T> queryable, SearchParameters<T> searchParameters, CancellationToken cancellationToken)
         {
-            if (searchParameters == null)
-            {
-                throw new ArgumentNullException(nameof(searchParameters));
-            }
+            ArgumentNullException.ThrowIfNull(queryable);
+            ArgumentNullException.ThrowIfNull(searchParameters);
 
             var ordered = searchParameters.IsDescending ? queryable.OrderByDescending(searchParameters.SortExpression) : queryable.OrderBy(searchParameters.SortExpression);
             var paged = ordered.Skip(searchParameters.PageSize * searchParameters.CurrentPage).Take(searchParameters.PageSize);

@@ -6,7 +6,7 @@
     using System.Threading.Tasks;
 
     public interface IReadDataContext<T> : IDisposable
-        where T : RecordBase
+        where T : class
     {
         /// <summary>
         /// Returns a total count of the elements of type <see cref="T"/> in the storage.

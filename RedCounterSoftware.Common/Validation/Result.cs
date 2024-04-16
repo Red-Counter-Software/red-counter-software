@@ -5,19 +5,13 @@
     using System.Linq;
     using Extensions;
 
-    public class Result
+    public class Result(Collection<Failure> failures, int? index = null)
     {
-        public Result(Collection<Failure> failures, int? index = null)
-        {
-            this.Failures = failures ?? throw new ArgumentNullException(nameof(failures));
-            this.Index = index;
-        }
+        public int? Index { get; } = index;
 
-        public int? Index { get; }
+        public bool IsValid => this.Failures.Count == 0;
 
-        public bool IsValid => !this.Failures.Any();
-
-        public Collection<Failure> Failures { get; }
+        public Collection<Failure> Failures { get; } = failures ?? throw new ArgumentNullException(nameof(failures));
 
         public string FormatFailuresForLog()
         {

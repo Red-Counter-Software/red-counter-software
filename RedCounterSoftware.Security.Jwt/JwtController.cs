@@ -16,54 +16,35 @@
     using RedCounterSoftware.Logging.Web;
 
     [AllowAnonymous]
-    public abstract class JwtController : ReadOnlyJwtController
+    public abstract class JwtController(
+        IAuthenticationService authenticationService,
+        IRoleService roleService,
+        IPersonService personService,
+        IMailingService mailingService,
+        ILogger<JwtController> logger,
+        string jwtKey,
+        string jwtIssuer,
+        string jwtAudience,
+        string passwordResetSubject,
+        string passwordResetTextBody,
+        string passwordResetHtmlBody) : ReadOnlyJwtController(authenticationService, roleService, personService, logger, jwtKey, jwtIssuer, jwtAudience)
     {
-        private readonly IAuthenticationService authenticationService;
+        private readonly IAuthenticationService authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
 
-        private readonly IMailingService mailingService;
+        private readonly IMailingService mailingService = mailingService ?? throw new ArgumentNullException(nameof(mailingService));
 
-        private readonly ILogger<JwtController> logger;
+        private readonly ILogger<JwtController> logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-        private readonly string passwordResetSubject;
+        private readonly string passwordResetSubject = passwordResetSubject ?? throw new ArgumentNullException(nameof(passwordResetSubject));
 
-        private readonly string passwordResetTextBody;
+        private readonly string passwordResetTextBody = passwordResetTextBody ?? throw new ArgumentNullException(nameof(passwordResetTextBody));
 
-        private readonly string passwordResetHtmlBody;
-
-        protected JwtController(
-            IAuthenticationService authenticationService,
-            IRoleService roleService,
-            IPersonService personService,
-            IMailingService mailingService,
-            ILogger<JwtController> logger,
-            string jwtKey,
-            string jwtIssuer,
-            string jwtAudience,
-            string passwordResetSubject,
-            string passwordResetTextBody,
-            string passwordResetHtmlBody)
-            : base(authenticationService, roleService, personService, logger, jwtKey, jwtIssuer, jwtAudience)
-        {
-            this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
-
-            this.mailingService = mailingService ?? throw new ArgumentNullException(nameof(mailingService));
-
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-            this.passwordResetSubject = passwordResetSubject ?? throw new ArgumentNullException(nameof(passwordResetSubject));
-
-            this.passwordResetTextBody = passwordResetTextBody ?? throw new ArgumentNullException(nameof(passwordResetTextBody));
-
-            this.passwordResetHtmlBody = passwordResetHtmlBody ?? throw new ArgumentNullException(nameof(passwordResetHtmlBody));
-        }
+        private readonly string passwordResetHtmlBody = passwordResetHtmlBody ?? throw new ArgumentNullException(nameof(passwordResetHtmlBody));
 
         [HttpPost("activate")]
         public async Task<IActionResult> ActivateUser([FromBody] ActivateUserModel model)
         {
-            if (model == null)
-            {
-                throw new ArgumentNullException(nameof(model));
-            }
+            ArgumentNullException.ThrowIfNull(model);
 
             using (this.logger.BeginScope(LoggingEvents.Activation))
             using (this.logger.ScopeRemoteIp(this.HttpContext))
@@ -85,10 +66,7 @@
         [HttpPost("requestresetpassword")]
         public async Task<IActionResult> SendPasswordResetMail([FromBody] PasswordResetRequestModel model)
         {
-            if (model == null)
-            {
-                throw new ArgumentNullException(nameof(model));
-            }
+            ArgumentNullException.ThrowIfNull(model);
 
             using (this.logger.BeginScope(LoggingEvents.ResetPassword))
             using (this.logger.ScopeRemoteIp(this.HttpContext))
@@ -118,10 +96,7 @@
         [HttpPost("resetpassword")]
         public async Task<IActionResult> ResetPassword([FromBody] PasswordResetModel model)
         {
-            if (model == null)
-            {
-                throw new ArgumentNullException(nameof(model));
-            }
+            ArgumentNullException.ThrowIfNull(model);
 
             using (this.logger.BeginScope(LoggingEvents.ResetPassword))
             using (this.logger.ScopeRemoteIp(this.HttpContext))

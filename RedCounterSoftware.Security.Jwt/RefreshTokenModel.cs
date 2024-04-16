@@ -2,27 +2,18 @@
 {
     using System;
 
-    public class RefreshTokenModel
+    public class RefreshTokenModel(string associatedJwt, int lifespanInMinutes = 0)
     {
-        public RefreshTokenModel(string associatedJwt, int lifespanInMinutes = 0)
-        {
-            this.Token = Guid.NewGuid();
-            this.IssuedAt = DateTime.Now;
-            this.IsValid = true;
-            this.ExpiryDate = (lifespanInMinutes > 0.0) ? DateTime.Now.AddMinutes(lifespanInMinutes) : null;
-            this.AssociatedJwt = associatedJwt;
-        }
+        public Guid Token { get; set; } = Guid.NewGuid();
 
-        public Guid Token { get; set; }
+        public DateTime IssuedAt { get; set; } = DateTime.Now;
 
-        public DateTime IssuedAt { get; set; }
-
-        public DateTime? ExpiryDate { get; set; }
+        public DateTime? ExpiryDate { get; set; } = (lifespanInMinutes > 0.0) ? DateTime.Now.AddMinutes(lifespanInMinutes) : null;
 
         public bool IsUsed { get; set; }
 
-        public bool IsValid { get; set; }
+        public bool IsValid { get; set; } = true;
 
-        public string AssociatedJwt { get; set; }
+        public string AssociatedJwt { get; set; } = associatedJwt;
     }
 }

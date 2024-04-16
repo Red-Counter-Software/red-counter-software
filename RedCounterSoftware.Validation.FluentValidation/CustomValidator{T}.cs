@@ -19,10 +19,7 @@ namespace RedCounterSoftware.Validation.FluentValidation
 
         public async Task<Result<T>> PerformValidation(T toValidate, int? index = null)
         {
-            if (toValidate == null)
-            {
-                throw new ArgumentNullException(nameof(toValidate));
-            }
+            ArgumentNullException.ThrowIfNull(toValidate);
 
             var result = await this.ValidateAsync(toValidate).ConfigureAwait(false);
             return new Result<T>(toValidate, new Collection<Failure>(result.Errors.Select(c => new Failure(c.PropertyName, c.ErrorMessage, c.AttemptedValue ?? string.Empty)).ToList()), index);
@@ -30,15 +27,8 @@ namespace RedCounterSoftware.Validation.FluentValidation
 
         public Task<Result<T>> ValidateProperty<TK>(T toValidate, Expression<Func<T, TK>> propertySelector)
         {
-            if (toValidate == null)
-            {
-                throw new ArgumentNullException(nameof(toValidate));
-            }
-
-            if (propertySelector == null)
-            {
-                throw new ArgumentNullException(nameof(propertySelector));
-            }
+            ArgumentNullException.ThrowIfNull(toValidate);
+            ArgumentNullException.ThrowIfNull(propertySelector);
 
             var result = this.Validate(toValidate);
             return Task.FromResult(new Result<T>(toValidate, new Collection<Failure>(result.Errors.Where(e => e.PropertyName.StartsWith(propertySelector.GetPropertyName())).Select(c => new Failure(c.PropertyName, c.ErrorMessage, c.AttemptedValue ?? string.Empty))

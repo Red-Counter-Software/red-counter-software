@@ -9,14 +9,10 @@
     using RedCounterSoftware.Common;
     using RedCounterSoftware.Common.Extensions;
 
-    public abstract class DataContext<T> : ReadOnlyDataContext<T>, IDataContext<T>
-            where T : RecordBase
+    public abstract class DataContext<T>(string connectionString, string tableName, string schemaName = "dbo")
+        : ReadOnlyDataContext<T>(connectionString, tableName, schemaName), IDataContext<T>
+            where T : class
     {
-        protected DataContext(string connectionString, string tableName, string schemaName = "dbo")
-            : base(connectionString, tableName, schemaName)
-        {
-        }
-
         public abstract Task<T> Add<TId>(Expression<Func<T, TId>> filter, TId id, T toAdd, CancellationToken cancellationToken = default);
 
         public abstract Task<T[]> AddBulk<TId>(Expression<Func<T, TId>> filter, T[] toAdd, CancellationToken cancellationToken = default);
