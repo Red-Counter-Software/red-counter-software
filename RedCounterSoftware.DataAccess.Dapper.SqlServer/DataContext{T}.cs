@@ -10,7 +10,7 @@
     using RedCounterSoftware.Common.Extensions;
 
     public abstract class DataContext<T> : ReadOnlyDataContext<T>, IDataContext<T>
-        where T : RecordBase
+            where T : RecordBase
     {
         protected DataContext(string connectionString, string tableName, string schemaName = "dbo")
             : base(connectionString, tableName, schemaName)
@@ -23,6 +23,9 @@
 
         public async Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(filter);
+            ArgumentNullException.ThrowIfNull(id);
+
             var identifierName = filter.GetPropertyName();
             var command = $"Delete From [{this.SchemaName}].[{this.TableName}] Where [{identifierName}] = @Id";
             using var connection = await this.GetSqlConnection(cancellationToken).ConfigureAwait(false);
@@ -31,6 +34,11 @@
 
         public async Task<T> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(filter);
+            ArgumentNullException.ThrowIfNull(id);
+            ArgumentNullException.ThrowIfNull(selector);
+            ArgumentNullException.ThrowIfNull(value);
+
             var identifierName = filter.GetPropertyName();
             var fieldName = selector.GetPropertyName();
             var command = $"Update [{this.SchemaName}].[{this.TableName}] Set [{fieldName}] = @Value Where [{identifierName}] = @Id";

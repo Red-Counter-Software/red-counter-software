@@ -1,7 +1,6 @@
 ﻿namespace RedCounterSoftware.Common
 {
     using System;
-    using System.Collections.ObjectModel;
     using System.Linq.Expressions;
     using System.Threading;
     using System.Threading.Tasks;
@@ -14,8 +13,11 @@
     {
         protected StoreService(IDataContext<T> context, ICustomValidator<T> validator)
         {
-            this.Context = context ?? throw new ArgumentNullException(nameof(context));
-            this.Validator = validator ?? throw new ArgumentNullException(nameof(validator));
+            ArgumentNullException.ThrowIfNull(context);
+            ArgumentNullException.ThrowIfNull(validator);
+
+            this.Context = context;
+            this.Validator = validator;
         }
 
         protected IDataContext<T> Context { get; }
@@ -30,15 +32,8 @@
 
         public virtual async Task<Result<T>> Add<TId>(Expression<Func<T, TId>> filter, TId id, T toAdd, CancellationToken cancellationToken = default)
         {
-            if (toAdd == null)
-            {
-                throw new ArgumentNullException(nameof(toAdd));
-            }
-
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
+            ArgumentNullException.ThrowIfNull(toAdd);
+            ArgumentNullException.ThrowIfNull(id);
 
             var result = await this.Validator.PerformValidation(toAdd).ConfigureAwait(false);
             var exists = await this.Context.ExistsBy(filter, id, cancellationToken).ConfigureAwait(false);
@@ -56,7 +51,7 @@
             }
 
             var created = await this.Context.Add(filter, id, toAdd, cancellationToken).ConfigureAwait(false);
-            return new Result<T>(created, new Collection<Failure>());
+            return new Result<T>(created, []);
         }
 
         public virtual Task<int> Count(CancellationToken cancellationToken = default) => this.Context.Count(cancellationToken);
@@ -65,7 +60,7 @@
         {
             await this.Context.Delete(filter, id, cancellationToken).ConfigureAwait(false);
 
-            return new Result(new Collection<Failure>());
+            return new Result([]);
         }
 
         public virtual Task<T?> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default) => this.Context.GetBy(selector, value, cancellationToken);
@@ -75,12 +70,9 @@
             return this.Context.GetByMultipleValues(selector, values, cancellationToken);
         }
 
-        public virtual async Task<Result<T>> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
+        public virtual async Task<Result<T>> Patch<TId, TK>(Expression<Func<T, TId>> filter, TId id, Expression<Func<T, TK?>> selector, TK? value, CancellationToken cancellationToken = default)
         {
-            if (selector == null)
-            {
-                throw new ArgumentNullException(nameof(selector));
-            }
+            ArgumentNullException.ThrowIfNull(selector);
 
             var current = await this.Context.GetBy(filter, id, cancellationToken).ConfigureAwait(false);
 
@@ -90,15 +82,13 @@
             }
 
             // Initialize empty result with unpatched item
-            var result = new Result<T>(current, new Collection<Failure>());
+            var result = new Result<T>(current, []);
 
             // Apply additional custom rules and get the potentially modified value. Result gets updated with failuers.
             var updatedValue = await this.PatchItemAdditionalChecks(current, selector, value, result, cancellationToken).ConfigureAwait(false);
 
             // Update the item with the new value
-#pragma warning disable SA1009 // Closing parenthesis should be spaced correctly
             typeof(T).GetProperty(selector.GetPropertyName())!.SetValue(current, updatedValue);
-#pragma warning restore SA1009 // Closing parenthesis should be spaced correctly
 
             // Validate the new item with the new value
             var propertyResult = await this.Validator.ValidateProperty(current, selector).ConfigureAwait(false);
@@ -112,7 +102,7 @@
             }
 
             var patched = await this.Context.Patch(filter, id, selector, updatedValue, cancellationToken).ConfigureAwait(false);
-            return new Result<T>(patched, new Collection<Failure>());
+            return new Result<T>(patched, []);
         }
 
         public Task<SearchResult<T>> Search(SearchParameters<T> searchParameters, CancellationToken cancellationToken = default)
@@ -148,7 +138,7 @@
             }
 
             var updated = await this.Context.Update(toUpdate, id, cancellationToken).ConfigureAwait(false);
-            return new Result<T>(updated, new Collection<Failure>());
+            return new Result<T>(updated, []);
         }
 
         protected abstract Task AddItemAdditionalChecks(T toAdd, Result<T> partialResult, CancellationToken cancellationToken = default);

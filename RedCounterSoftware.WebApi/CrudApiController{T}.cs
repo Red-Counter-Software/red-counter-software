@@ -29,10 +29,8 @@
 
         protected async Task<Result<T>> Add<TK>(Expression<Func<T, TK>> filter, TK id, T item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+            ArgumentNullException.ThrowIfNull(filter);
+            ArgumentNullException.ThrowIfNull(item);
 
             using (this.logger.BeginScope(LoggingEvents.Crud))
             using (this.logger.GetCommonScopes(this.HttpContext, this.HttpContext.User))
@@ -55,26 +53,25 @@
             }
         }
 
-        protected virtual Task<T?> GetById<TK>(Expression<Func<T, TK>> filter, TK id) => this.StoreService.GetBy(filter, id);
+        protected virtual Task<T?> GetById<TK>(Expression<Func<T, TK>> filter, TK id)
+        {
+            ArgumentNullException.ThrowIfNull(filter);
 
-        protected virtual Task<Result> Delete<TK>(Expression<Func<T, TK>> filter, TK id) => this.StoreService.Delete(filter, id);
+            return this.StoreService.GetBy(filter, id);
+        }
+
+        protected virtual Task<Result> Delete<TK>(Expression<Func<T, TK>> filter, TK id)
+        {
+            ArgumentNullException.ThrowIfNull(filter);
+
+            return this.StoreService.Delete(filter, id);
+        }
 
         protected virtual async Task<Result<T>> Patch<TK>(Expression<Func<T, TK>> filter, TK id, string propertyName, object value)
         {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
-
-            if (string.IsNullOrEmpty(propertyName))
-            {
-                throw new ArgumentException("Cannot be empty", nameof(propertyName));
-            }
-
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
+            ArgumentNullException.ThrowIfNull(filter);
+            ArgumentNullException.ThrowIfNull(id);
+            ArgumentNullException.ThrowIfNull(propertyName);
 
             var exp = propertyName.GetPropertyExpression<T>();
             if (exp == null)
@@ -83,8 +80,10 @@
             }
 
             var type = Nullable.GetUnderlyingType(exp.GetPropertyType()) ?? exp.GetPropertyType();
-            var changedValue = type.IsEnum
-                ? Enum.Parse(type, value.ToString() ?? throw new InvalidOperationException($"Failed to convert to string value {value}"))
+            var stringValue = value?.ToString();
+            var changedValue = value is null ? null :
+                type.IsEnum
+                ? Enum.Parse(type, stringValue ?? throw new InvalidOperationException($"Failed to convert to string value {value}"))
                 : Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
             using (this.logger.BeginScope(LoggingEvents.Crud))
             using (this.logger.GetCommonScopes(this.HttpContext, this.HttpContext.User))
@@ -102,6 +101,7 @@
             return count;
         }
 
+        [HttpGet]
         protected virtual Task<SearchResult<T>> Search(SearchParameters<T> searchParameters) => this.StoreService.Search(searchParameters);
     }
 }

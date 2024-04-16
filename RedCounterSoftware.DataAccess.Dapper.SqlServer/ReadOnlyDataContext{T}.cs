@@ -19,11 +19,6 @@
 
         protected ReadOnlyDataContext(string connectionString, string tableName, string schemaName = "dbo")
         {
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentNullException(nameof(connectionString));
-            }
-
             this.ConnectionString = !string.IsNullOrWhiteSpace(connectionString) ? connectionString : throw new ArgumentNullException(nameof(connectionString));
             this.TableName = !string.IsNullOrWhiteSpace(tableName) ? tableName : throw new ArgumentNullException(nameof(tableName));
             this.SchemaName = schemaName;
@@ -44,6 +39,8 @@
 
         public virtual async Task<bool> ExistsBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(selector);
+
             var fieldName = selector.GetPropertyName();
             var command = $"Select Count(Distinct 1) From [{this.SchemaName}].[{this.TableName}] Where [{fieldName}] = @Value";
             using var connection = await this.GetSqlConnection(cancellationToken).ConfigureAwait(false);
@@ -52,6 +49,8 @@
 
         public virtual async Task<T?> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(selector);
+
             var fieldName = selector.GetPropertyName();
             var command = $"Select * From [{this.SchemaName}].[{this.TableName}] Where [{fieldName}] = @Value";
             using var connection = await this.GetSqlConnection(cancellationToken).ConfigureAwait(false);
@@ -60,6 +59,9 @@
 
         public virtual async Task<SearchResult<T>> GetByMultipleValues<TK>(Expression<Func<T, TK>> selector, TK[] values, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(selector);
+            ArgumentNullException.ThrowIfNull(values);
+
             var fieldName = selector.GetPropertyName();
             var command = $"Select * From [{this.SchemaName}].[{this.TableName}] Where [{fieldName}] IN @Values";
             using var connection = await this.GetSqlConnection(cancellationToken).ConfigureAwait(false);
@@ -70,10 +72,7 @@
 
         public virtual async Task<SearchResult<T>> Search(SearchParameters<T> searchParameters, CancellationToken cancellationToken = default)
         {
-            if (searchParameters is null)
-            {
-                throw new ArgumentNullException(nameof(searchParameters));
-            }
+            ArgumentNullException.ThrowIfNull(searchParameters);
 
             var command = this.ComposeSearch(searchParameters);
             command = await this.SearchFilters(command, searchParameters).ConfigureAwait(false);
@@ -123,15 +122,8 @@
 
         protected virtual Task<StringBuilder> SearchFilters(StringBuilder command, SearchParameters<T> searchParameters)
         {
-            if (command == null)
-            {
-                throw new ArgumentNullException(nameof(command));
-            }
-
-            if (searchParameters == null)
-            {
-                throw new ArgumentNullException(nameof(searchParameters));
-            }
+            ArgumentNullException.ThrowIfNull(command);
+            ArgumentNullException.ThrowIfNull(searchParameters);
 
             var offset = searchParameters.CurrentPage * searchParameters.PageSize;
             var sortDirection = searchParameters.IsDescending ? "Desc" : "Asc";

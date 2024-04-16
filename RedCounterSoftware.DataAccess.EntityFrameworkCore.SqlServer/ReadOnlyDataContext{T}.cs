@@ -33,10 +33,7 @@
 
         public virtual Task<bool> ExistsBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
-            if (selector == null)
-            {
-                throw new ArgumentNullException(nameof(selector));
-            }
+            ArgumentNullException.ThrowIfNull(selector);
 
             var lambda = selector.GetFilterExpression(value);
             return this.entitySet.AnyAsync(lambda, cancellationToken);
@@ -44,10 +41,7 @@
 
         public virtual Task<T?> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
-            if (selector == null)
-            {
-                throw new ArgumentNullException(nameof(selector));
-            }
+            ArgumentNullException.ThrowIfNull(selector);
 
             var lambda = selector.GetFilterExpression(value);
             return this.GetEntitySet().SingleOrDefaultAsync(lambda, cancellationToken);
@@ -55,6 +49,8 @@
 
         public virtual async Task<SearchResult<T>> GetByMultipleValues<TK>(Expression<Func<T, TK>> selector, TK[] values, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(selector);
+
             if (values == null || values.Length == 0)
             {
                 return new SearchResult<T>(0, new List<T>());
@@ -69,6 +65,8 @@
 
         public virtual Task<SearchResult<T>> Search(SearchParameters<T> searchParameters, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(searchParameters);
+
             var query = this.ComposeSearch(searchParameters);
             return this.SearchFilters(query, searchParameters, cancellationToken);
         }

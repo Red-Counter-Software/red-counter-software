@@ -8,15 +8,8 @@
     {
         public byte[] EncryptPassword(string password, string salt = "")
         {
-            if (string.IsNullOrEmpty(password))
-            {
-                throw new ArgumentException("Cannot be empty", nameof(password));
-            }
-
-            if (string.IsNullOrEmpty(salt))
-            {
-                throw new ArgumentException("Salt cannot be an empty string", nameof(salt));
-            }
+            ArgumentException.ThrowIfNullOrWhiteSpace(password, nameof(password));
+            ArgumentException.ThrowIfNullOrWhiteSpace(salt, nameof(salt));
 
             var toEncrypt = password + salt.ToUpperInvariant();
 

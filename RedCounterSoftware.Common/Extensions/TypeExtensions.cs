@@ -7,6 +7,8 @@
     {
         public static bool IsNullableType(this Type type)
         {
+            ArgumentNullException.ThrowIfNull(type);
+
             var typeInfo = type.GetTypeInfo();
 
             return !typeInfo.IsValueType
