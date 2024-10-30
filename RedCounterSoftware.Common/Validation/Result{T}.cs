@@ -4,10 +4,10 @@
     using System.Linq;
     using Extensions;
 
-    public class Result<T>(T item, Collection<Failure> failures, int? index = null) : Result(failures, index)
+    public class Result<T>(T? item, Collection<Failure> failures, int? index = null) : Result(failures, index)
         where T : class
     {
-        public T Item { get; } = item;
+        public T? Item { get; } = item;
 
         public new Result<T> ToCamelCasedPropertiesResult()
         {

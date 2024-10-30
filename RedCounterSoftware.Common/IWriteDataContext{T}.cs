@@ -35,9 +35,10 @@
         /// <typeparam name="TId">The type of the Id property.</typeparam>
         /// <param name="filter">The expression to filter by Id.</param>
         /// <param name="id">The id.</param>
+        /// <param name="hardDelete">Indicates whether to hard delete the entity.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns a completed task.</returns>
-        Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default);
+        Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, bool hardDelete = false, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Updates the property indicated by the <see cref="selector"/> of the entity with provided <see cref="id"/> using the provided <see cref="value"/>.

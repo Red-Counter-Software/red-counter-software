@@ -56,9 +56,9 @@
 
         public virtual Task<int> Count(CancellationToken cancellationToken = default) => this.Context.Count(cancellationToken);
 
-        public virtual async Task<Result> Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default)
+        public virtual async Task<Result> Delete<TId>(Expression<Func<T, TId>> filter, TId id, bool hardDelete = false, CancellationToken cancellationToken = default)
         {
-            await this.Context.Delete(filter, id, cancellationToken).ConfigureAwait(false);
+            await this.Context.Delete(filter, id, hardDelete, cancellationToken).ConfigureAwait(false);
 
             return new Result([]);
         }

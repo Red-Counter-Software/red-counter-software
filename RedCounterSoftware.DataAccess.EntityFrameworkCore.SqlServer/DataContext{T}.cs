@@ -49,13 +49,21 @@
             return [.. results];
         }
 
-        public virtual async Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default)
+        public virtual async Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, bool hardDelete = false, CancellationToken cancellationToken = default)
         {
             var lambda = filter.GetFilterExpression(id);
             var entity = await this.entitySet.SingleOrDefaultAsync(lambda, cancellationToken).ConfigureAwait(false);
             if (entity != null)
             {
-                _ = this.entitySet.Remove(entity);
+                if (hardDelete || typeof(T).GetInterface(typeof(IDeletable).Name) == null)
+                {
+                    _ = this.entitySet.Remove(entity);
+                }
+                else
+                {
+                    ((IDeletable)entity).IsDeleted = true;
+                }
+
                 _ = await this.Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             }
         }

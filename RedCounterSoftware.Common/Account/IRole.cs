@@ -13,10 +13,10 @@
         string Name { get; }
 
         /// <summary>
-        /// Gets the list of associated <see cref="Permissions"/>.
+        /// Gets the list of associated claims.
         /// </summary>
         /// <value>
-        /// The list of associated <see cref="Permissions"/>.
+        /// The list of associated claims.
         /// </value>
         Collection<string> Claims { get; }
     }

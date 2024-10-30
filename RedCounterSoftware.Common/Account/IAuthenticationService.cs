@@ -12,7 +12,7 @@
     public interface IAuthenticationService : IReadAuthenticationService
     {
         /// <summary>
-        /// Activates a <see cref="User"/> by setting its <see cref="User.IsActive"/> flag to true and nulling its <see cref="User.ActivationGuid"/>.
+        /// Activates a <see cref="IUser"/> by nulling its <see cref="IUser.ActivationGuid"/>.
         /// </summary>
         /// <param name="activationGuid">The activation guid used to find the user.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
@@ -20,7 +20,7 @@
         Task<Result<IUser>> Activate(Guid activationGuid, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Computes a new password hash using the provided <see cref="password"/>, optional salt defined in the implementation and sets it as the new <see cref="User.Password"/>.
+        /// Computes a new password hash using the provided <see cref="password"/>, optional salt defined in the implementation and sets it as the new <see cref="IUser.Password"/>.
         /// </summary>
         /// <param name="userId">The id of the user to update.</param>
         /// <param name="password">The new password to set.</param>

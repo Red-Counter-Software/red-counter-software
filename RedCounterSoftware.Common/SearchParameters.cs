@@ -3,11 +3,6 @@
     /// <summary>
     /// Initializes a new instance of the <see cref="SearchParameters{T}"/> class.
     /// </summary>
-    /// <param name="searchTerm">The term to search for.</param>
-    /// <param name="sortTerm">The name of the property to sort by.</param>
-    /// <param name="isDescending">True for a descending order, false for ascending.</param>
-    /// <param name="pageSize">The amount of items to return.</param>
-    /// <param name="currentPage">The 0 based index of the subset of items to return.</param>
     public class SearchParameters
     {
         public SearchParameters()
@@ -16,6 +11,14 @@
             this.SortTerm = string.Empty;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SearchParameters"/> class.
+        /// </summary>
+        /// <param name="searchTerm">The term to search for.</param>
+        /// <param name="sortTerm">The name of the property to sort by.</param>
+        /// <param name="isDescending">True for a descending order, false for ascending.</param>
+        /// <param name="pageSize">The amount of items to return.</param>
+        /// <param name="currentPage">The 0 based index of the subset of items to return.</param>
         public SearchParameters(string searchTerm, string sortTerm, bool isDescending = false, int pageSize = 10, int currentPage = 0)
         {
             this.SearchTerm = searchTerm ?? string.Empty;

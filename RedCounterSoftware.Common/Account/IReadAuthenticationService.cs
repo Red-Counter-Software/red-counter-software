@@ -32,7 +32,7 @@
         Task<bool> IsPasswordValid(string email, string password, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Returns false if the <see cref="User"/> with provided id does not exist, if the <see cref="User.IsActive"/> flag is false, or if the user is <see cref="User.LockedOutUntil"/> a date in the future, otherwise returns true.
+        /// Returns false if the <see cref="IUser"/> with provided id does not exist or if the user inactive.
         /// </summary>
         /// <param name="user">The user to test.</param>
         /// <param name="cancellationToken">The cancellation token.</param>

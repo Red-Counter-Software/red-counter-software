@@ -38,9 +38,10 @@
         /// <typeparam name="TId">The type of the Id property.</typeparam>
         /// <param name="filter">The expression to filter by Id.</param>
         /// <param name="id">The id.</param>
+        /// <param name="hardDelete">Indicates whether to hard delete the entity.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns a completed task.</returns>
-        Task<Result> Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default);
+        Task<Result> Delete<TId>(Expression<Func<T, TId>> filter, TId id, bool hardDelete = false, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Returns a single entity that matches the provided selector and value, null if no match is found, or throws an exception if more than one match is found.

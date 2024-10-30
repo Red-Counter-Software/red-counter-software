@@ -17,13 +17,15 @@
 
         public abstract Task<T[]> AddBulk<TId>(Expression<Func<T, TId>> filter, T[] toAdd, CancellationToken cancellationToken = default);
 
-        public async Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default)
+        public async Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, bool hardDelete = false, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(filter);
             ArgumentNullException.ThrowIfNull(id);
 
             var identifierName = filter.GetPropertyName();
-            var command = $"Delete From [{this.SchemaName}].[{this.TableName}] Where [{identifierName}] = @Id";
+            string command = hardDelete || typeof(T).GetInterface(typeof(IDeletable).Name) == null
+                ? $"Delete From [{this.SchemaName}].[{this.TableName}] Where [{identifierName}] = @Id"
+                : $"Update [{this.SchemaName}].[{this.TableName}] Set IsDeleted = 1 Where [{identifierName}] = @Id";
             using var connection = await this.GetSqlConnection(cancellationToken).ConfigureAwait(false);
             _ = await connection.ExecuteAsync(command, new { Id = id }).ConfigureAwait(false);
         }

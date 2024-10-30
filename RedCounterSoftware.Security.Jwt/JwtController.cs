@@ -57,7 +57,7 @@
                     return this.NotFound();
                 }
 
-                _ = await this.authenticationService.SetPassword(result.Item.Id, model.Password).ConfigureAwait(false);
+                _ = await this.authenticationService.SetPassword(result.Item!.Id, model.Password).ConfigureAwait(false);
                 this.logger.LogInformation(LoggingEvents.ActivationOk, "User {user} with activation code [{code}] created a password and activated succesfully", result.Item.Email, model.Id);
                 return this.Ok();
             }
@@ -86,7 +86,7 @@
 
                 user = result.Item;
 
-                await this.mailingService.SendPasswordRecoveryMail(user.Email, guid, this.passwordResetSubject, this.passwordResetTextBody, this.passwordResetHtmlBody, CancellationToken.None).ConfigureAwait(false);
+                await this.mailingService.SendPasswordRecoveryMail(user!.Email, guid, this.passwordResetSubject, this.passwordResetTextBody, this.passwordResetHtmlBody, CancellationToken.None).ConfigureAwait(false);
                 this.logger.LogInformation(LoggingEvents.ResetPassword, "Reset password email sent for user {user} with reset guid [{id}]", model.Email, guid);
 
                 return this.Ok();

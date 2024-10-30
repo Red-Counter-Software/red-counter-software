@@ -31,6 +31,7 @@
         public Task<bool> ExistsBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(selector);
+            ArgumentNullException.ThrowIfNull(value);
 
             var exp = selector.Body.CreateKeyComparisonExpression(Expression.Constant(value));
             var lambda = (Expression<Func<T, bool>>)Expression.Lambda(exp, false, selector.GetParameterExpression());
@@ -40,6 +41,7 @@
         public async Task<T?> GetBy<TK>(Expression<Func<T, TK>> selector, TK value, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(selector);
+            ArgumentNullException.ThrowIfNull(value);
 
             var exp = selector.Body.CreateKeyComparisonExpression(Expression.Constant(value));
             var lambda = (Expression<Func<T, bool>>)Expression.Lambda(exp, false, selector.GetParameterExpression());
@@ -48,6 +50,9 @@
 
         public virtual async Task<SearchResult<T>> GetByMultipleValues<TK>(Expression<Func<T, TK>> selector, TK[] values, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(selector);
+            ArgumentNullException.ThrowIfNull(values);
+
             if (values == null || values.Length == 0)
             {
                 return new SearchResult<T>(0, []);
@@ -68,6 +73,7 @@
 
         public async Task<T> Add<TId>(Expression<Func<T, TId>> filter, TId id, T toAdd, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(filter);
             ArgumentNullException.ThrowIfNull(toAdd);
 
             await this.Session.StoreAsync(toAdd, cancellationToken).ConfigureAwait(false);
@@ -78,6 +84,7 @@
 
         public async Task<T[]> AddBulk<TId>(Expression<Func<T, TId>> filter, T[] toAdd, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(filter);
             ArgumentNullException.ThrowIfNull(toAdd);
 
             using var bulkInsert = this.Store.BulkInsert(token: cancellationToken);
@@ -89,14 +96,32 @@
             return toAdd;
         }
 
-        public async Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, CancellationToken cancellationToken = default)
+        public async Task Delete<TId>(Expression<Func<T, TId>> filter, TId id, bool hardDelete = false, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(filter);
+            ArgumentNullException.ThrowIfNull(id);
+
             if (cancellationToken.IsCancellationRequested)
             {
                 return;
             }
 
-            this.Session.Delete(id);
+            var entity = await this.Session.LoadAsync<T>(id.ToString(), cancellationToken).ConfigureAwait(false);
+
+            if (entity is null)
+            {
+                return;
+            }
+
+            if (hardDelete || typeof(T).GetInterface(typeof(IDeletable).Name) == null)
+            {
+                this.Session.Delete(entity);
+            }
+            else
+            {
+                ((IDeletable)entity).IsDeleted = true;
+            }
+
             await this.Session.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 

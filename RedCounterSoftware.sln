@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.202
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.Common", "RedCounterSoftware.Common\RedCounterSoftware.Common.csproj", "{A4FCAF5C-76D6-4E0B-A78F-3916314A2E52}"
 EndProject
@@ -24,7 +24,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.Validati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.DataAccess.RavenDb", "RedCounterSoftware.DataAccess.RavenDb\RedCounterSoftware.DataAccess.RavenDb.csproj", "{91590154-296D-42CC-BB30-738757365E1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedCounterSoftware.DataAccess.Dapper.SqlServer", "RedCounterSoftware.DataAccess.Dapper.SqlServer\RedCounterSoftware.DataAccess.Dapper.SqlServer.csproj", "{1194F884-D301-4C9C-89E9-06C7E162D179}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedCounterSoftware.DataAccess.Dapper.SqlServer", "RedCounterSoftware.DataAccess.Dapper.SqlServer\RedCounterSoftware.DataAccess.Dapper.SqlServer.csproj", "{1194F884-D301-4C9C-89E9-06C7E162D179}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedCounterSoftware.Mediatr", "RedCounterSoftware.Mediatr\RedCounterSoftware.Mediatr.csproj", "{FF3CB28F-B1A2-4C67-945B-17CF5E8F4B0C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,6 +70,10 @@ Global
 		{1194F884-D301-4C9C-89E9-06C7E162D179}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1194F884-D301-4C9C-89E9-06C7E162D179}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1194F884-D301-4C9C-89E9-06C7E162D179}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF3CB28F-B1A2-4C67-945B-17CF5E8F4B0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF3CB28F-B1A2-4C67-945B-17CF5E8F4B0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF3CB28F-B1A2-4C67-945B-17CF5E8F4B0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF3CB28F-B1A2-4C67-945B-17CF5E8F4B0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
