@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="Rules for EasyLife" Description="Code analysis rules for EasyLife" ToolsVersion="16.0">
+<RuleSet Name="Rules for EasyLife" Description="Code analysis rules for EasyLife" ToolsVersion="17.0">
   <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
     <Rule Id="CA1000" Action="Error" />
     <Rule Id="CA1001" Action="Error" />
@@ -937,7 +937,7 @@
     <Rule Id="SA1136" Action="Error" />
     <Rule Id="SA1137" Action="Error" />
     <Rule Id="SA1139" Action="Error" />
-    <Rule Id="SA1200" Action="Error" />
+    <Rule Id="SA1200" Action="None" />
     <Rule Id="SA1201" Action="Error" />
     <Rule Id="SA1202" Action="Error" />
     <Rule Id="SA1203" Action="Error" />
